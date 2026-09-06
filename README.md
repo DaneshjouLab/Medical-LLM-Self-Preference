@@ -25,7 +25,7 @@ Useful entry points:
 - [Manuscript PDF](output/pdf/med_self_preference_updated.pdf)
 - [Experiment details](docs/experiment.md)
 - [Documentation map](docs/README.md)
-- [Static results explorer](src/leaderboard/index.html)
+- [Static results explorer](leaderboard/index.html)
 - [Derived analysis definitions](data/analysis/self_preference/README.md)
 
 ## Main findings
@@ -161,7 +161,7 @@ interface is documented in [src/inference/README.md](src/inference/README.md).
 | `data/deprecated/` | Historical inputs, standalone pilots, and smoke outputs retained for provenance |
 | `docs/experiment.md` | Detailed methods, counts, results, limitations, and available files |
 | `docs/latex/med_self_preference/` | LaTeX manuscript source |
-| `src/leaderboard/` | Build-free static results explorer |
+| `leaderboard/` | Build-free static results explorer |
 
 The `real_pcoqi` directory spelling is retained for compatibility with the
 recorded production paths.
@@ -181,7 +181,7 @@ outside the current experiments are labeled and kept under `data/deprecated/`.
 The static explorer has no build step or JavaScript dependency:
 
 ```bash
-python -m http.server 8000 --directory src/leaderboard
+python -m http.server 8000 --directory leaderboard
 ```
 
 Then open `http://localhost:8000`.
