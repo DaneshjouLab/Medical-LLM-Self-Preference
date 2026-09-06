@@ -5,7 +5,7 @@ file server. The page has no build step and no JavaScript dependency.
 
 ## Result sources
 
-- `docs/drafts/sep_3_pasted_revised.tex` supplies the current position-adjusted
+- `docs/drafts/sep_6.tex` supplies the current position-adjusted
   answer-rank self-preference results, aggregate generator performance, and
   experiment counts.
 - `data/analysis/self_preference/` contains the generated model-, pairwise-, and
