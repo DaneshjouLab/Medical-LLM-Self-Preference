@@ -16,6 +16,8 @@
     <header class="site-header">
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="#single-turn">Single turn</a>
+        <a href="#score-bias">Score bias</a>
+        <a href="#own-answer-win-rate">Own-answer win rate</a>
         <a href="#multi-turn">Multi-Turn</a>
         <a href="#unblinded">Model unblinded</a>
       </nav>
@@ -106,6 +108,140 @@
             favorably than outside judges ranked that same answer. Pooled Answer
             Rank Self-Preference is +1.219 [+1.177, +1.261]. Removing the rubric
             preserves 91.5% of candidate-pair orderings.
+          </p>
+        </figure>
+      </section>
+
+      <section class="section" id="score-bias" aria-labelledby="score-bias-title">
+        <div class="section-heading">
+          <h2 id="score-bias-title">Answer Score Bias</h2>
+          <p>
+            Answer Score Bias compares how the own-model judge and outside
+            judges score the same fixed answer. Positive values indicate more
+            generous scoring of the judge's own answer.
+          </p>
+        </div>
+
+        <figure class="figure-card figure-card--full">
+          <svg class="chart chart--wide" viewBox="0 0 1200 520" role="img" aria-labelledby="score-chart-title score-chart-desc">
+            <title id="score-chart-title">Vertical bar chart of Real-POCQi Answer Score Bias by judge</title>
+            <desc id="score-chart-desc">Answer Score Bias ranges from positive 0.67 for Gemini 3.7 Flash to negative 0.75 for GPT-5.6 Terra. Error bars show 95% confidence intervals.</desc>
+            <g class="chart__grid">
+              <line x1="75" y1="70" x2="1135" y2="70" />
+              <line x1="75" y1="150" x2="1135" y2="150" />
+              <line class="chart__zero" x1="75" y1="230" x2="1135" y2="230" />
+              <line x1="75" y1="310" x2="1135" y2="310" />
+              <line x1="75" y1="390" x2="1135" y2="390" />
+            </g>
+            <g class="chart__bars">
+              <rect class="bar bar--strong" x="108" y="96" width="64" height="134" rx="2" />
+              <rect class="bar bar--strong" x="238" y="102" width="64" height="128" rx="2" />
+              <rect class="bar bar--strong" x="368" y="120" width="64" height="110" rx="2" />
+              <rect class="bar bar--strong" x="498" y="166" width="64" height="64" rx="2" />
+              <rect class="bar bar--strong" x="628" y="226" width="64" height="4" rx="2" />
+              <rect class="bar bar--zero" x="758" y="229" width="64" height="2" rx="1" />
+              <rect class="bar bar--negative" x="888" y="230" width="64" height="18" rx="2" />
+              <rect class="bar bar--negative" x="1018" y="230" width="64" height="150" rx="2" />
+            </g>
+            <g class="chart__intervals">
+              <line x1="140" y1="92" x2="140" y2="100" /><line x1="130" y1="92" x2="150" y2="92" /><line x1="130" y1="100" x2="150" y2="100" />
+              <line x1="270" y1="92" x2="270" y2="110" /><line x1="260" y1="92" x2="280" y2="92" /><line x1="260" y1="110" x2="280" y2="110" />
+              <line x1="400" y1="112" x2="400" y2="126" /><line x1="390" y1="112" x2="410" y2="112" /><line x1="390" y1="126" x2="410" y2="126" />
+              <line x1="530" y1="160" x2="530" y2="170" /><line x1="520" y1="160" x2="540" y2="160" /><line x1="520" y1="170" x2="540" y2="170" />
+              <line x1="660" y1="224" x2="660" y2="230" /><line x1="650" y1="224" x2="670" y2="224" /><line x1="650" y1="230" x2="670" y2="230" />
+              <line x1="790" y1="220" x2="790" y2="240" /><line x1="780" y1="220" x2="800" y2="220" /><line x1="780" y1="240" x2="800" y2="240" />
+              <line x1="920" y1="244" x2="920" y2="254" /><line x1="910" y1="244" x2="930" y2="244" /><line x1="910" y1="254" x2="930" y2="254" />
+              <line x1="1050" y1="372" x2="1050" y2="388" /><line x1="1040" y1="372" x2="1060" y2="372" /><line x1="1040" y1="388" x2="1060" y2="388" />
+            </g>
+            <g class="chart__bar-values">
+              <text x="140" y="118">+0.67</text><text x="270" y="124">+0.64</text>
+              <text x="400" y="142">+0.55</text><text x="530" y="188">+0.32</text>
+              <text x="1050" y="252">−0.75</text>
+            </g>
+            <g class="chart__values chart__values--centered">
+              <text x="660" y="217">+0.02</text><text x="790" y="214">0.00</text>
+              <text x="920" y="270">−0.09</text>
+            </g>
+            <g class="chart__labels">
+              <text x="45" y="75">+0.8</text><text x="45" y="155">+0.4</text>
+              <text x="58" y="235">0</text><text x="45" y="315">−0.4</text><text x="45" y="395">−0.8</text>
+              <text x="140" y="410" text-anchor="end" transform="rotate(-35 140 410)">Gemini 3.7 Flash</text>
+              <text x="270" y="410" text-anchor="end" transform="rotate(-35 270 410)">Qwen 3.5 122B</text>
+              <text x="400" y="410" text-anchor="end" transform="rotate(-35 400 410)">Gemini 3.1 Pro</text>
+              <text x="530" y="410" text-anchor="end" transform="rotate(-35 530 410)">GPT-5.6 Sol</text>
+              <text x="660" y="410" text-anchor="end" transform="rotate(-35 660 410)">Claude Opus 5</text>
+              <text x="790" y="410" text-anchor="end" transform="rotate(-35 790 410)">Qwen 3.8 27B</text>
+              <text x="920" y="410" text-anchor="end" transform="rotate(-35 920 410)">Claude Sonnet 5</text>
+              <text x="1050" y="410" text-anchor="end" transform="rotate(-35 1050 410)">GPT-5.6 Terra</text>
+              <text x="565" y="510">Judge model</text>
+              <text transform="translate(18 318) rotate(-90)">Answer Score Bias (0–5 scale)</text>
+            </g>
+          </svg>
+          <p class="figure-caption">
+            Models are sorted from highest to lowest Answer Score Bias. Red bars
+            indicate more generous own-model scoring; gray bars indicate more
+            critical own-model scoring. Error bars show 95% confidence intervals.
+          </p>
+        </figure>
+      </section>
+
+      <section class="section" id="own-answer-win-rate" aria-labelledby="win-rate-title">
+        <div class="section-heading">
+          <h2 id="win-rate-title">Own-Answer Win Rate</h2>
+          <p>
+            Own-Answer Win Rate is the percentage of competitors that a judge
+            ranks below its own model's answer. It reflects both answer quality
+            and how favorably the judge treats its own answer.
+          </p>
+        </div>
+
+        <figure class="figure-card figure-card--full">
+          <svg class="chart chart--wide" viewBox="0 0 1200 500" role="img" aria-labelledby="win-chart-title win-chart-desc">
+            <title id="win-chart-title">Vertical bar chart of Real-POCQi Own-Answer Win Rate by judge</title>
+            <desc id="win-chart-desc">Own-Answer Win Rate ranges from 99.4 percent for Claude Opus 5 to 18.8 percent for Qwen 3.8 27B.</desc>
+            <g class="chart__grid">
+              <line x1="75" y1="350" x2="1135" y2="350" />
+              <line x1="75" y1="275" x2="1135" y2="275" />
+              <line class="chart__reference" x1="75" y1="200" x2="1135" y2="200" />
+              <line x1="75" y1="125" x2="1135" y2="125" />
+              <line x1="75" y1="50" x2="1135" y2="50" />
+            </g>
+            <g class="chart__bars">
+              <rect class="bar bar--strong" x="108" y="52" width="64" height="298" rx="2" />
+              <rect class="bar bar--strong" x="238" y="69" width="64" height="281" rx="2" />
+              <rect class="bar bar--strong" x="368" y="81" width="64" height="269" rx="2" />
+              <rect class="bar bar--strong" x="498" y="129" width="64" height="221" rx="2" />
+              <rect class="bar bar--strong" x="628" y="171" width="64" height="179" rx="2" />
+              <rect class="bar bar--strong" x="758" y="180" width="64" height="170" rx="2" />
+              <rect class="bar bar--strong" x="888" y="259" width="64" height="91" rx="2" />
+              <rect class="bar bar--strong" x="1018" y="294" width="64" height="56" rx="2" />
+            </g>
+            <g class="chart__bar-values">
+              <text x="140" y="74">99.4%</text><text x="270" y="91">93.7%</text>
+              <text x="400" y="103">89.5%</text><text x="530" y="151">73.7%</text>
+              <text x="660" y="193">59.8%</text><text x="790" y="202">56.8%</text>
+              <text x="920" y="281">30.2%</text><text x="1050" y="316">18.8%</text>
+            </g>
+            <g class="chart__labels">
+              <text x="46" y="355">0%</text><text x="38" y="280">25%</text>
+              <text x="38" y="205">50%</text><text x="38" y="130">75%</text><text x="30" y="55">100%</text>
+              <text x="140" y="370" text-anchor="end" transform="rotate(-35 140 370)">Claude Opus 5</text>
+              <text x="270" y="370" text-anchor="end" transform="rotate(-35 270 370)">GPT-5.6 Terra</text>
+              <text x="400" y="370" text-anchor="end" transform="rotate(-35 400 370)">GPT-5.6 Sol</text>
+              <text x="530" y="370" text-anchor="end" transform="rotate(-35 530 370)">Gemini 3.7 Flash</text>
+              <text x="660" y="370" text-anchor="end" transform="rotate(-35 660 370)">Claude Sonnet 5</text>
+              <text x="790" y="370" text-anchor="end" transform="rotate(-35 790 370)">Gemini 3.1 Pro</text>
+              <text x="920" y="370" text-anchor="end" transform="rotate(-35 920 370)">Qwen 3.5 122B</text>
+              <text x="1050" y="370" text-anchor="end" transform="rotate(-35 1050 370)">Qwen 3.8 27B</text>
+              <text x="565" y="490">Judge model</text>
+              <text transform="translate(18 305) rotate(-90)">Own-Answer Win Rate</text>
+            </g>
+          </svg>
+          <p class="figure-caption">
+            The dashed 50% line marks equal wins and losses against competitors.
+            Unlike the fixed-answer measures, this rate can be high because the
+            model wrote a stronger answer, because its judge favored that answer,
+            or both.
           </p>
         </figure>
       </section>

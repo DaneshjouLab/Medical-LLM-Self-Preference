@@ -336,11 +336,19 @@ tbody tr:hover {
   fill: #a5a29c;
 }
 
+.bar--zero {
+  fill: var(--muted);
+}
+
 .chart__values {
   fill: var(--cardinal-dark);
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 700;
+}
+
+.chart__values--centered {
+  text-anchor: middle;
 }
 
 .chart__bar-values {
@@ -354,6 +362,11 @@ tbody tr:hover {
 .chart__intervals line {
   stroke: var(--cardinal-dark);
   stroke-width: 2;
+}
+
+.chart__grid .chart__reference {
+  stroke: var(--cardinal-dark);
+  stroke-dasharray: 6 6;
 }
 
 .figure-caption {

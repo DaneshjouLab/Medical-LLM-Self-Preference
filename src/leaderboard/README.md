@@ -15,7 +15,8 @@ Charts are inline SVG and can be edited without adding a JavaScript dependency.
 Shared colors, fonts, and dimensions are defined as custom properties at the top
 of `styles.css`.
 
-The page separates blinded single-turn results, blinded multi-turn results, and
-the paired model-unblinded comparison into independent anchor sections.
+The page separates blinded single-turn results, Answer Score Bias,
+Own-Answer Win Rate, blinded multi-turn results, and the paired model-unblinded
+comparison into independent anchor sections.
 
 The Google Fonts import is optional; system font fallbacks are already included.
