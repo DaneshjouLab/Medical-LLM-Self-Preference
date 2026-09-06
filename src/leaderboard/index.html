@@ -15,9 +15,8 @@
 
     <header class="site-header">
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="#overall">Overall</a>
         <a href="#single-turn">Single turn</a>
-        <a href="#multi-turn">Multi turn</a>
+        <a href="#multi-turn">Multi-Turn</a>
         <a href="#unblinded">Model unblinded</a>
       </nav>
     </header>
@@ -25,7 +24,6 @@
     <main id="main-content">
       <section class="hero" id="top" aria-labelledby="page-title">
         <div class="hero__copy">
-          <p class="eyebrow">Benchmark results · August 2026</p>
           <h1 id="page-title">LLM Medical Self Preference</h1>
           <p class="hero__intro">
             Evaluating reliability and same-model affinity in LLM-as-a-judge
@@ -34,209 +32,123 @@
         </div>
       </section>
 
-      <section class="section" id="overall" aria-labelledby="leaderboard-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Overall</p>
-            <h2 id="leaderboard-title">Overall leaderboard</h2>
-          </div>
-          <p>
-            Models are ordered by position-adjusted matched self-preference on
-            all 620 Real-POCQi questions. Higher own-answer rank uplift means
-            stronger self-preference; performance metrics remain contextual.
-          </p>
-        </div>
-
-        <div class="table-wrap" tabindex="0" aria-label="Scrollable leaderboard table">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Rank</th>
-                <th scope="col">Model</th>
-                <th scope="col">Family</th>
-                <th scope="col">Mean rank</th>
-                <th scope="col">Ranked first</th>
-                <th scope="col" aria-sort="descending">Own-answer uplift ↓</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="rank">01</span></td>
-                <th scope="row">GPT-5.6 Sol</th>
-                <td>OpenAI</td>
-                <td><strong>4.301</strong></td>
-                <td>8.3%</td>
-                <td class="metric"><strong>2.939</strong><small>[2.836, 3.041]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">02</span></td>
-                <th scope="row">GPT-5.6 Terra</th>
-                <td>OpenAI</td>
-                <td><strong>3.371</strong></td>
-                <td>17.5%</td>
-                <td class="metric"><strong>2.224</strong><small>[2.123, 2.325]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">03</span></td>
-                <th scope="row">Gemini 3.7 Flash</th>
-                <td>Google</td>
-                <td><strong>3.919</strong></td>
-                <td>1.3%</td>
-                <td class="metric"><strong>1.236</strong><small>[1.155, 1.317]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">04</span></td>
-                <th scope="row">Claude Opus 5</th>
-                <td>Anthropic</td>
-                <td><strong>1.887</strong></td>
-                <td>69.3%</td>
-                <td class="metric"><strong>0.969</strong><small>[0.919, 1.019]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">05</span></td>
-                <th scope="row">Qwen 3.5 122B</th>
-                <td>Qwen</td>
-                <td><strong>6.524</strong></td>
-                <td>0.4%</td>
-                <td class="metric"><strong>0.730</strong><small>[0.608, 0.852]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">06</span></td>
-                <th scope="row">Gemini 3.1 Pro</th>
-                <td>Google</td>
-                <td><strong>4.620</strong></td>
-                <td>1.3%</td>
-                <td class="metric"><strong>0.683</strong><small>[0.575, 0.790]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">07</span></td>
-                <th scope="row">Claude Sonnet 5</th>
-                <td>Anthropic</td>
-                <td><strong>4.389</strong></td>
-                <td>1.5%</td>
-                <td class="metric"><strong>0.647</strong><small>[0.530, 0.763]</small></td>
-              </tr>
-              <tr>
-                <td><span class="rank">08</span></td>
-                <th scope="row">Qwen 3.8 27B</th>
-                <td>Qwen</td>
-                <td><strong>6.989</strong></td>
-                <td>0.3%</td>
-                <td class="metric"><strong>0.324</strong><small>[0.228, 0.419]</small></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="table-note">
-          4,960 listwise judgments: 620 questions × 8 judges. The leaderboard
-          reports the magnitude of the signed matched effect, so higher values
-          mean more self-preference. Mean rank and first-place rate describe answer
-          performance only. Brackets show 95% confidence intervals.
-        </p>
-      </section>
-
       <section class="section" id="single-turn" aria-labelledby="single-turn-title">
-        <div class="section-heading section-heading--right">
+        <div class="section-heading">
+          <h2 id="single-turn-title">Single-turn self-preference</h2>
           <p>
             Every judge showed matched self-preference on the 620-question
-            Real-POCQi task. The pooled effect was −1.219 positions, with
-            substantial variation across models.
+            Real-POCQi task. Pooled Answer Rank Self-Preference was +1.219
+            positions, with substantial variation across models.
           </p>
-          <div>
-            <p class="eyebrow">Single turn · blinded</p>
-            <h2 id="single-turn-title">Single-turn self-preference</h2>
-          </div>
         </div>
 
         <figure class="figure-card figure-card--full">
           <figcaption>
             <span>
-              <strong>Matched effect by judge</strong>
-              <small>Real-POCQi · own-answer rank uplift</small>
+              <strong>Answer Rank Self-Preference by judge</strong>
+              <small>Real-POCQi · higher values mean greater self-preference</small>
             </span>
             <span class="figure-number">Figure 01</span>
           </figcaption>
 
-          <svg class="chart chart--wide" viewBox="0 0 760 520" role="img" aria-labelledby="bar-title bar-desc">
-            <title id="bar-title">Single-turn matched self-preference by model</title>
-            <desc id="bar-desc">GPT-5.6 Sol has the largest own-answer rank uplift at 2.939 positions and Qwen 3.8 27B the smallest at 0.324 positions.</desc>
+          <svg class="chart chart--wide" viewBox="0 0 1200 500" role="img" aria-labelledby="bar-title bar-desc">
+            <title id="bar-title">Vertical bar chart of single-turn Answer Rank Self-Preference by model</title>
+            <desc id="bar-desc">GPT-5.6 Sol has the largest Answer Rank Self-Preference at 2.939 positions and Qwen 3.8 27B the smallest at 0.324 positions. Error bars show 95% confidence intervals.</desc>
             <g class="chart__grid">
-              <line class="chart__zero" x1="240" y1="28" x2="240" y2="450" />
-              <line x1="378" y1="28" x2="378" y2="450" />
-              <line x1="515" y1="28" x2="515" y2="450" />
-              <line x1="653" y1="28" x2="653" y2="450" />
-            </g>
-            <g class="chart__labels">
-              <text x="20" y="70">GPT-5.6 Sol</text><text x="20" y="120">GPT-5.6 Terra</text>
-              <text x="20" y="170">Gemini 3.7 Flash</text><text x="20" y="220">Claude Opus 5</text>
-              <text x="20" y="270">Qwen 3.5 122B</text><text x="20" y="320">Gemini 3.1 Pro</text>
-              <text x="20" y="370">Claude Sonnet 5</text><text x="20" y="420">Qwen 3.8 27B</text>
-              <text x="236" y="478">0</text><text x="374" y="478">1</text>
-              <text x="511" y="478">2</text><text x="649" y="478">3</text>
-              <text x="240" y="505">Own-answer rank uplift (positions)</text>
+              <line x1="75" y1="350" x2="1135" y2="350" />
+              <line x1="75" y1="250" x2="1135" y2="250" />
+              <line x1="75" y1="150" x2="1135" y2="150" />
+              <line x1="75" y1="50" x2="1135" y2="50" />
             </g>
             <g class="chart__bars">
-              <rect class="bar bar--strong" x="240" y="48" width="404" height="26" rx="2" />
-              <rect class="bar bar--strong" x="240" y="98" width="306" height="26" rx="2" />
-              <rect class="bar" x="240" y="148" width="170" height="26" rx="2" />
-              <rect class="bar" x="240" y="198" width="133" height="26" rx="2" />
-              <rect class="bar" x="240" y="248" width="100" height="26" rx="2" />
-              <rect class="bar" x="240" y="298" width="94" height="26" rx="2" />
-              <rect class="bar" x="240" y="348" width="89" height="26" rx="2" />
-              <rect class="bar" x="240" y="398" width="45" height="26" rx="2" />
+              <rect class="bar bar--strong" x="108" y="56" width="64" height="294" rx="2" />
+              <rect class="bar bar--strong" x="238" y="128" width="64" height="222" rx="2" />
+              <rect class="bar bar--strong" x="368" y="226" width="64" height="124" rx="2" />
+              <rect class="bar bar--strong" x="498" y="253" width="64" height="97" rx="2" />
+              <rect class="bar bar--strong" x="628" y="277" width="64" height="73" rx="2" />
+              <rect class="bar bar--strong" x="758" y="282" width="64" height="68" rx="2" />
+              <rect class="bar bar--strong" x="888" y="285" width="64" height="65" rx="2" />
+              <rect class="bar bar--strong" x="1018" y="318" width="64" height="32" rx="2" />
             </g>
-            <g class="chart__values">
-              <text x="652" y="68">2.939</text><text x="554" y="118">2.224</text>
-              <text x="418" y="168">1.236</text><text x="381" y="218">0.969</text>
-              <text x="348" y="268">0.730</text><text x="342" y="318">0.683</text>
-              <text x="337" y="368">0.647</text><text x="293" y="418">0.324</text>
+            <g class="chart__intervals">
+              <line x1="140" y1="46" x2="140" y2="66" /><line x1="130" y1="46" x2="150" y2="46" /><line x1="130" y1="66" x2="150" y2="66" />
+              <line x1="270" y1="118" x2="270" y2="138" /><line x1="260" y1="118" x2="280" y2="118" /><line x1="260" y1="138" x2="280" y2="138" />
+              <line x1="400" y1="218" x2="400" y2="235" /><line x1="390" y1="218" x2="410" y2="218" /><line x1="390" y1="235" x2="410" y2="235" />
+              <line x1="530" y1="248" x2="530" y2="258" /><line x1="520" y1="248" x2="540" y2="248" /><line x1="520" y1="258" x2="540" y2="258" />
+              <line x1="660" y1="265" x2="660" y2="289" /><line x1="650" y1="265" x2="670" y2="265" /><line x1="650" y1="289" x2="670" y2="289" />
+              <line x1="790" y1="271" x2="790" y2="293" /><line x1="780" y1="271" x2="800" y2="271" /><line x1="780" y1="293" x2="800" y2="293" />
+              <line x1="920" y1="274" x2="920" y2="297" /><line x1="910" y1="274" x2="930" y2="274" /><line x1="910" y1="297" x2="930" y2="297" />
+              <line x1="1050" y1="308" x2="1050" y2="327" /><line x1="1040" y1="308" x2="1060" y2="308" /><line x1="1040" y1="327" x2="1060" y2="327" />
+            </g>
+            <g class="chart__bar-values">
+              <text x="140" y="78">2.939</text><text x="270" y="150">2.224</text>
+              <text x="400" y="248">1.236</text><text x="530" y="275">0.969</text>
+              <text x="660" y="299">0.730</text><text x="790" y="304">0.683</text>
+              <text x="920" y="307">0.647</text><text x="1050" y="340">0.324</text>
+            </g>
+            <g class="chart__labels">
+              <text x="58" y="355">0</text><text x="58" y="255">1</text>
+              <text x="58" y="155">2</text><text x="58" y="55">3</text>
+              <text x="140" y="370" text-anchor="end" transform="rotate(-35 140 370)">GPT-5.6 Sol</text>
+              <text x="270" y="370" text-anchor="end" transform="rotate(-35 270 370)">GPT-5.6 Terra</text>
+              <text x="400" y="370" text-anchor="end" transform="rotate(-35 400 370)">Gemini 3.7 Flash</text>
+              <text x="530" y="370" text-anchor="end" transform="rotate(-35 530 370)">Claude Opus 5</text>
+              <text x="660" y="370" text-anchor="end" transform="rotate(-35 660 370)">Qwen 3.5 122B</text>
+              <text x="790" y="370" text-anchor="end" transform="rotate(-35 790 370)">Gemini 3.1 Pro</text>
+              <text x="920" y="370" text-anchor="end" transform="rotate(-35 920 370)">Claude Sonnet 5</text>
+              <text x="1050" y="370" text-anchor="end" transform="rotate(-35 1050 370)">Qwen 3.8 27B</text>
+              <text x="565" y="490">Judge model</text>
+              <text transform="translate(18 330) rotate(-90)">Answer Rank Self-Preference (positions)</text>
             </g>
           </svg>
           <p class="figure-caption">
-            Bars show absolute uplift for readability; all signed effects are
-            negative. The pooled effect is −1.219 [−1.261, −1.177]. Removing
-            the rubric preserves 91.5% of candidate-pair orderings.
+            Positive values indicate that a judge ranked its own answer more
+            favorably than outside judges ranked that same answer. Pooled Answer
+            Rank Self-Preference is +1.219 [+1.177, +1.261]. Removing the rubric
+            preserves 91.5% of candidate-pair orderings.
           </p>
         </figure>
       </section>
 
       <section class="section" id="multi-turn" aria-labelledby="multi-turn-title">
         <div class="section-heading">
-          <div>
-            <p class="eyebrow">Multi turn · blinded</p>
-            <h2 id="multi-turn-title">Self-preference across turns</h2>
-          </div>
+          <h2 id="multi-turn-title">Multi-Turn Self Preference</h2>
           <p>
             Matched self-preference appears at every tested conversation length.
-            Models are ranked by their average own-answer uplift across the 2-,
-            4-, 6-, and 8-turn analyses.
+            Models are ranked by their average Answer Rank Self-Preference
+            across the 2-, 4-, 6-, and 8-turn analyses.
           </p>
         </div>
 
         <div class="result-layout">
           <figure class="figure-card">
             <figcaption>
-              <span><strong>Pooled effect by length</strong><small>MedSP1000 · six judges</small></span>
+              <span><strong>Answer Rank Self-Preference by length</strong><small>MedSP1000 · eight judges</small></span>
               <span class="figure-number">Figure 02</span>
             </figcaption>
             <svg class="chart" viewBox="0 0 520 360" role="img" aria-labelledby="turn-title turn-desc">
-              <title id="turn-title">Matched self-preference by visible conversation turns</title>
-              <desc id="turn-desc">Own-answer rank uplift is 0.518 at two turns, 0.457 at four, 0.502 at six, and 0.613 at eight turns.</desc>
+              <title id="turn-title">Bar chart of Answer Rank Self-Preference by visible conversation turns</title>
+              <desc id="turn-desc">Answer Rank Self-Preference is 0.57 at two turns, 0.53 at four, 0.62 at six, and 0.61 at eight turns.</desc>
               <g class="chart__grid">
                 <line x1="68" y1="50" x2="68" y2="300" /><line x1="68" y1="300" x2="480" y2="300" />
                 <line x1="68" y1="264" x2="480" y2="264" /><line x1="68" y1="193" x2="480" y2="193" />
                 <line x1="68" y1="121" x2="480" y2="121" /><line x1="68" y1="50" x2="480" y2="50" />
               </g>
-              <polyline class="result-line" points="90,180 210,224 330,191 450,111" />
-              <g class="chart__intervals">
-                <line x1="90" y1="132" x2="90" y2="227" /><line x1="82" y1="132" x2="98" y2="132" /><line x1="82" y1="227" x2="98" y2="227" />
-                <line x1="210" y1="174" x2="210" y2="273" /><line x1="202" y1="174" x2="218" y2="174" /><line x1="202" y1="273" x2="218" y2="273" />
-                <line x1="330" y1="140" x2="330" y2="243" /><line x1="322" y1="140" x2="338" y2="140" /><line x1="322" y1="243" x2="338" y2="243" />
-                <line x1="450" y1="62" x2="450" y2="162" /><line x1="442" y1="62" x2="458" y2="62" /><line x1="442" y1="162" x2="458" y2="162" />
+              <g class="chart__bars">
+                <rect class="bar bar--strong" x="66" y="143" width="48" height="157" rx="2" />
+                <rect class="bar bar--strong" x="186" y="171" width="48" height="129" rx="2" />
+                <rect class="bar bar--strong" x="306" y="107" width="48" height="193" rx="2" />
+                <rect class="bar bar--strong" x="426" y="114" width="48" height="186" rx="2" />
               </g>
-              <g class="chart__points">
-                <circle cx="90" cy="180" r="8" /><circle cx="210" cy="224" r="8" />
-                <circle cx="330" cy="191" r="8" /><circle cx="450" cy="111" r="8" />
+              <g class="chart__intervals">
+                <line x1="90" y1="86" x2="90" y2="200" /><line x1="82" y1="86" x2="98" y2="86" /><line x1="82" y1="200" x2="98" y2="200" />
+                <line x1="210" y1="121" x2="210" y2="229" /><line x1="202" y1="121" x2="218" y2="121" /><line x1="202" y1="229" x2="218" y2="229" />
+                <line x1="330" y1="50" x2="330" y2="164" /><line x1="322" y1="50" x2="338" y2="50" /><line x1="322" y1="164" x2="338" y2="164" />
+                <line x1="450" y1="57" x2="450" y2="171" /><line x1="442" y1="57" x2="458" y2="57" /><line x1="442" y1="171" x2="458" y2="171" />
+              </g>
+              <g class="chart__bar-values">
+                <text x="90" y="165">0.57</text><text x="210" y="193">0.53</text>
+                <text x="330" y="129">0.62</text><text x="450" y="136">0.61</text>
               </g>
               <g class="chart__labels">
                 <text x="38" y="269">0.4</text><text x="38" y="198">0.5</text>
@@ -244,7 +156,7 @@
                 <text x="86" y="326">2</text><text x="206" y="326">4</text>
                 <text x="326" y="326">6</text><text x="446" y="326">8</text>
                 <text x="210" y="350">Visible turns</text>
-                <text transform="translate(17 265) rotate(-90)">Rank uplift</text>
+                <text transform="translate(17 294) rotate(-90)">Answer Rank Self-Preference</text>
               </g>
             </svg>
             <p class="figure-caption">Error bars show 95% confidence intervals over 200 complete questions at every length.</p>
@@ -252,73 +164,79 @@
 
           <div class="table-wrap table-wrap--compact" tabindex="0" aria-label="Scrollable multi-turn results table">
             <table class="compact-table">
-              <thead><tr><th scope="col">Rank</th><th scope="col">Judge</th><th scope="col" aria-sort="descending">Average uplift ↓</th><th scope="col">2 turns</th><th scope="col">4 turns</th><th scope="col">6 turns</th><th scope="col">8 turns</th></tr></thead>
+              <thead><tr><th scope="col">Rank</th><th scope="col">Judge</th><th scope="col" aria-sort="descending">Average rank self-preference ↓</th><th scope="col">2 turns</th><th scope="col">4 turns</th><th scope="col">6 turns</th><th scope="col">8 turns</th></tr></thead>
               <tbody>
-                <tr><td><span class="rank">01</span></td><th scope="row">GPT-5.6 Terra</th><td><strong>0.651</strong></td><td>0.826</td><td>0.508</td><td>0.637</td><td>0.632</td></tr>
-                <tr><td><span class="rank">02</span></td><th scope="row">GPT-5.6 Sol</th><td><strong>0.625</strong></td><td>0.536</td><td>0.487</td><td>0.539</td><td>0.938</td></tr>
-                <tr><td><span class="rank">03</span></td><th scope="row">Gemini 3.1 Pro</th><td><strong>0.582</strong></td><td>0.791</td><td>0.554</td><td>0.436</td><td>0.545</td></tr>
-                <tr><td><span class="rank">04</span></td><th scope="row">Gemini 3.7 Flash</th><td><strong>0.561</strong></td><td>0.572</td><td>0.600</td><td>0.428</td><td>0.645</td></tr>
-                <tr><td><span class="rank">05</span></td><th scope="row">Claude Sonnet 5</th><td><strong>0.408</strong></td><td>0.233</td><td>0.378</td><td>0.549</td><td>0.472</td></tr>
-                <tr><td><span class="rank">06</span></td><th scope="row">Claude Opus 5</th><td><strong>0.310</strong></td><td>0.153</td><td>0.218</td><td>0.423</td><td>0.445</td></tr>
-                <tr class="table-total"><td>—</td><th scope="row">Pooled</th><td><strong>0.523</strong></td><td>0.518</td><td>0.457</td><td>0.502</td><td>0.613</td></tr>
+                <tr><td><span class="rank">01</span></td><th scope="row">GPT-5.6 Sol</th><td><strong>0.893</strong></td><td>0.77</td><td>0.73</td><td>0.87</td><td>1.20</td></tr>
+                <tr><td><span class="rank">02</span></td><th scope="row">GPT-5.6 Terra</th><td><strong>0.838</strong></td><td>0.87</td><td>0.72</td><td>0.86</td><td>0.90</td></tr>
+                <tr><td><span class="rank">03</span></td><th scope="row">Gemini 3.1 Pro</th><td><strong>0.760</strong></td><td>1.05</td><td>0.67</td><td>0.67</td><td>0.65</td></tr>
+                <tr><td><span class="rank">04</span></td><th scope="row">Gemini 3.7 Flash</th><td><strong>0.753</strong></td><td>0.78</td><td>0.68</td><td>0.75</td><td>0.80</td></tr>
+                <tr><td><span class="rank">05</span></td><th scope="row">Qwen 3.5 122B</th><td><strong>0.485</strong></td><td>0.62</td><td>0.38</td><td>0.53</td><td>0.41</td></tr>
+                <tr><td><span class="rank">06</span></td><th scope="row">Claude Opus 5</th><td><strong>0.418</strong></td><td>0.10</td><td>0.46</td><td>0.64</td><td>0.47</td></tr>
+                <tr><td><span class="rank">07</span></td><th scope="row">Claude Sonnet 5</th><td><strong>0.288</strong></td><td>0.04</td><td>0.35</td><td>0.39</td><td>0.37</td></tr>
+                <tr><td><span class="rank">08</span></td><th scope="row">Qwen 3.8 27B</th><td><strong>0.220</strong></td><td>0.32</td><td>0.21</td><td>0.24</td><td>0.11</td></tr>
+                <tr class="table-total"><td>—</td><th scope="row">Pooled</th><td><strong>0.583</strong></td><td>0.57</td><td>0.53</td><td>0.62</td><td>0.61</td></tr>
               </tbody>
             </table>
           </div>
         </div>
-        <p class="table-note">Uplifts are absolute magnitudes of the signed matched effects. Higher values mean more self-preference.</p>
+        <p class="table-note">Positive Answer Rank Self-Preference means greater self-preference. The pooled 95% confidence intervals are [0.49, 0.65], [0.45, 0.60], [0.54, 0.70], and [0.53, 0.69] at 2, 4, 6, and 8 turns, respectively.</p>
       </section>
 
       <section class="section" id="unblinded" aria-labelledby="unblinded-title">
-        <div class="section-heading section-heading--right">
+        <div class="section-heading">
+          <h2 id="unblinded-title">When identities are visible</h2>
           <p>
             Revealing generator names modestly weakened, rather than amplified,
-            pooled self-preference. Every model still showed a negative matched
-            effect in the identity-revealed condition.
+            pooled self-preference. Every model still had positive Answer Rank
+            Self-Preference in the identity-revealed condition.
           </p>
-          <div>
-            <p class="eyebrow">Model unblinded</p>
-            <h2 id="unblinded-title">When identities are visible</h2>
-          </div>
         </div>
 
         <div class="table-wrap" tabindex="0" aria-label="Scrollable unblinded comparison table">
           <table>
-            <thead><tr><th scope="col">Judge</th><th scope="col">Unblinded effect</th><th scope="col">Matched blinded</th><th scope="col">Change</th><th scope="col">Unblinded 95% CI</th></tr></thead>
+            <thead><tr><th scope="col">Judge</th><th scope="col">Revealed rank self-preference</th><th scope="col">Blinded rank self-preference</th><th scope="col" aria-sort="ascending">Change ↑</th><th scope="col">Revealed 95% CI</th></tr></thead>
             <tbody>
-              <tr><th scope="row">GPT-5.6 Sol</th><td><strong>−2.742</strong></td><td>−2.826</td><td>+0.083</td><td>[−2.911, −2.573]</td></tr>
-              <tr><th scope="row">GPT-5.6 Terra</th><td><strong>−2.028</strong></td><td>−2.105</td><td>+0.077</td><td>[−2.188, −1.867]</td></tr>
-              <tr><th scope="row">Gemini 3.7 Flash</th><td><strong>−1.177</strong></td><td>−1.315</td><td>+0.138</td><td>[−1.335, −1.018]</td></tr>
-              <tr><th scope="row">Claude Opus 5</th><td><strong>−1.153</strong></td><td>−1.256</td><td>+0.104</td><td>[−1.246, −1.059]</td></tr>
-              <tr><th scope="row">Claude Sonnet 5</th><td><strong>−0.795</strong></td><td>−0.832</td><td>+0.038</td><td>[−0.997, −0.593]</td></tr>
-              <tr><th scope="row">Gemini 3.1 Pro</th><td><strong>−0.449</strong></td><td>−0.749</td><td>+0.300</td><td>[−0.637, −0.262]</td></tr>
-              <tr class="table-total"><th scope="row">Pooled</th><td><strong>−1.391</strong></td><td>−1.514</td><td>+0.123</td><td>[−1.471, −1.310]</td></tr>
+              <tr><th scope="row">Gemini 3.1 Pro</th><td><strong>+0.536</strong></td><td>+0.777</td><td>−0.241</td><td>[+0.347, +0.725]</td></tr>
+              <tr><th scope="row">Gemini 3.7 Flash</th><td><strong>+1.109</strong></td><td>+1.232</td><td>−0.123</td><td>[+0.959, +1.259]</td></tr>
+              <tr><th scope="row">Claude Opus 5</th><td><strong>+0.877</strong></td><td>+0.982</td><td>−0.106</td><td>[+0.794, +0.959]</td></tr>
+              <tr><th scope="row">GPT-5.6 Sol</th><td><strong>+2.897</strong></td><td>+2.982</td><td>−0.086</td><td>[+2.723, +3.071]</td></tr>
+              <tr><th scope="row">GPT-5.6 Terra</th><td><strong>+2.171</strong></td><td>+2.257</td><td>−0.086</td><td>[+2.007, +2.334]</td></tr>
+              <tr><th scope="row">Claude Sonnet 5</th><td><strong>+0.638</strong></td><td>+0.714</td><td>−0.075</td><td>[+0.443, +0.833]</td></tr>
+              <tr><th scope="row">Qwen 3.8 27B</th><td><strong>+0.165</strong></td><td>+0.223</td><td>−0.058</td><td>[+0.032, +0.298]</td></tr>
+              <tr><th scope="row">Qwen 3.5 122B</th><td><strong>+0.779</strong></td><td>+0.757</td><td>+0.022</td><td>[+0.573, +0.985]</td></tr>
+              <tr class="table-total"><th scope="row">Pooled</th><td><strong>+1.146</strong></td><td>+1.240</td><td>−0.094</td><td>[+1.078, +1.215]</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="table-note">Paired comparison on 200 questions and six API judges. Positive change means weaker self-preference after names are revealed.</p>
+        <p class="table-note">Paired comparison on 200 questions and all eight judges, sorted by revealed-minus-blinded change. Negative change means weaker self-preference after names are revealed. The pooled change is −0.094 [−0.148, −0.040].</p>
       </section>
 
       <section class="section methods" id="methodology" aria-labelledby="methods-title">
         <div class="methods__heading">
-          <p class="eyebrow">Study design</p>
           <h2 id="methods-title">How to read this benchmark</h2>
+          <p>
+            The study uses fixed-response comparisons to separate judging
+            behavior from differences in answer quality.
+          </p>
         </div>
 
         <div class="methods__content">
           <article>
             <h3>Evaluation setup</h3>
             <p>
-              Eight models answered all 620 Real-POCQi questions; six models
-              completed 200 MedSP1000 scenarios. Judges scored and ranked blinded,
-              randomly ordered answers from every model in the relevant cohort.
+              Eight models answered all 620 Real-POCQi questions and completed
+              200 MedSP1000 scenarios. The study contains 11,360 identity-blind
+              judgments and 13,760 judgments across all conditions.
             </p>
           </article>
           <article>
-            <h3>Primary measure</h3>
+            <h3>Three measures</h3>
             <p>
-              For the same answer to the same question, we compare its rank from
-              the generating model with its mean rank from all outside judges.
-              Negative differences indicate matched same-model affinity.
+              Answer Rank Self-Preference compares ranks for the same fixed
+              answer. Answer Score Bias analogously compares rubric scores, and
+              Own-Answer Win Rate reports how often a judge ranks its answer
+              above a competitor. Larger values of all three measures point
+              toward greater self-preference.
             </p>
           </article>
           <article>
@@ -342,8 +260,10 @@
 
       <section class="citation" aria-labelledby="citation-title">
         <div>
-          <p class="eyebrow">Reuse and attribution</p>
           <h2 id="citation-title">Cite this work</h2>
+          <p class="citation__intro">
+            Use this citation when referencing the benchmark or its results.
+          </p>
         </div>
         <pre><code>@misc{ansari2026medicalselfpreference,
   title   = {Medical LLM Self-Preference},
@@ -355,7 +275,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>Medical LLM Self-Preference · Results updated August 2026</p>
+      <p>Medical LLM Self-Preference · Results updated September 2026</p>
       <a href="#top">Back to top ↑</a>
     </footer>
   </body>
