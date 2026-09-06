@@ -52,10 +52,11 @@ MANIFEST
 .coverage_cache/
 site/
 docs/_build/
-output/pdf/*.aux
-output/pdf/*.log
-output/pdf/*.out
 tmp/
+
+# Local manuscript, documentation, and generated output files
+/docs/
+/output/
 
 # Type-checker and profiler output
 dmypy.json
