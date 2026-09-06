@@ -366,6 +366,7 @@ def _runner_argv(
     max_concurrency: int,
     retries: int,
     retry_delay_seconds: float,
+    reveal_generator_identities: bool,
     force: bool,
 ) -> list[str]:
     argv = [
@@ -402,6 +403,8 @@ def _runner_argv(
         argv.extend(("--num-questions", str(num_questions)))
     if question_sample_seed is not None:
         argv.extend(("--question-sample-seed", str(question_sample_seed)))
+    if reveal_generator_identities:
+        argv.append("--reveal-generator-identities")
     if force:
         argv.append("--force")
     return argv
@@ -428,6 +431,7 @@ def main(
     direct_experiment_id: str = "real_pocqi_direct_ranking_random100_v1",
     direct_run_id: str = "",
     direct_max_output_tokens: int = 1024,
+    reveal_generator_identities: bool = False,
     force: bool = False,
 ) -> None:
     try:
@@ -501,6 +505,7 @@ def main(
                     max_concurrency=max_concurrency,
                     retries=retries,
                     retry_delay_seconds=retry_delay_seconds,
+                    reveal_generator_identities=reveal_generator_identities,
                     force=force,
                 )
             )

@@ -3,16 +3,16 @@
   "methodology": "docs/archive/legacy_manuscript.md sections 3.1-3.3",
   "outputs": {
     "model_scores.csv": {
-      "rows": 46,
-      "sha256": "c1fc7f3180485a18963413845b609448e7e6b0212bc4b7621b8d57b36d0986fe"
+      "rows": 48,
+      "sha256": "6ddc739657e74989c61380b23b8580a51300f533f33e72f70f58b7324a330663"
     },
     "pairwise_scores.csv": {
-      "rows": 274,
-      "sha256": "4a591cda9193e33b0e6ec988c924e39d0ccf5d23d5e2e99d1c2aedcca869eca2"
+      "rows": 288,
+      "sha256": "6bd720271c1416affe4149f320d3de200e984ecd2ec5dbee46ac3985fb28d91f"
     },
     "question_model_scores.csv": {
-      "rows": 11760,
-      "sha256": "bcefc8d1133ec0e32a937d6fcabeb6cbf5a40308a71e30d7ac4988487f8f9fac"
+      "rows": 12160,
+      "sha256": "0664da2b6138a98014634bdf90340e5fba7f2cc8011b46155fab5095affb64e3"
     }
   },
   "sources": [
@@ -39,8 +39,8 @@
       "dataset": "real_pocqi",
       "experiment_id": "real_pocqi_identity_revealed_random200_v1",
       "path": "data/real_pcoqi/judgements/identity_revealed_rubric_and_model_ranking.jsonl",
-      "sha256": "d03b81d3a76fbc088c7434ba6cd4b421f6392eca6b844c12c712a163e439a1a9",
-      "successful_logical_judgments": 1200,
+      "sha256": "86b1425860bbb8f60edef25e7208a83334d53af3cf2dcf91bf699a5346f5074f",
+      "successful_logical_judgments": 1600,
       "turns": null
     },
     {

@@ -93,6 +93,7 @@ def test_modal_runner_argv_preserves_seeded_subset() -> None:
             max_concurrency=8,
             retries=2,
             retry_delay_seconds=1,
+            reveal_generator_identities=True,
             force=False,
         )
     )
@@ -102,3 +103,4 @@ def test_modal_runner_argv_preserves_seeded_subset() -> None:
     assert args.num_questions == 100
     assert args.question_sample_seed == 20260824
     assert args.modal_concurrency == 8
+    assert args.reveal_generator_identities is True
