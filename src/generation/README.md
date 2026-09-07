@@ -168,3 +168,41 @@ two flags are omitted. It writes judgments to
 leaving the blinded JSONL untouched. The manifest freezes the selected question
 IDs, sample seed, output path, and identity condition. Use those question IDs to
 filter the completed blinded sweep for paired analysis.
+
+### Identity-blind score-only follow-up
+
+The score-only condition reuses the same seed-42 sample of 200 questions, but
+shows the judge exactly one saved generation per call. It requests only the
+same five Real-POCQi rubric scores; neither the prompt nor structured output
+contains a ranking. With eight generators and eight judges, the complete
+matrix contains 12,800 individually scored answers.
+
+Run the six API judges with:
+
+```bash
+uv run python -m judging.score_only_real_pocqi --dry-run
+uv run python -m judging.score_only_real_pocqi
+```
+
+Run the two Qwen judges through the batched Modal deployment with:
+
+```bash
+uv run modal run src/judging/modal_real_pocqi_judging.py \
+  --score-only \
+  --num-questions 200 \
+  --question-sample-seed 42 \
+  --max-output-tokens 1024
+```
+
+Both commands append to the resumable
+`data/real_pcoqi/judgements/score_only.jsonl` artifact under the
+`real_pocqi_score_only_random200_v1` experiment ID. Once all cells complete,
+construct tie-aware score rankings and compare them with the existing explicit
+answer-selection and combined rubric-sum rankings:
+
+```bash
+uv run python scripts/analyze_score_only_real_pocqi.py
+```
+
+The reproducible Markdown report and machine-readable statistics are written
+under `data/analysis/score_only/`.

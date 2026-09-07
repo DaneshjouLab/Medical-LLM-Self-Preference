@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 from judging import DirectRankingOutput
-from judging.modal_real_pocqi_judging import ModalBatchCaller, _runner_argv
+from judging.modal_real_pocqi_judging import (
+    ModalBatchCaller,
+    _runner_argv,
+    _score_only_runner_argv,
+)
 from judging.run_real_pocqi_judging import parse_args
+from judging.score_only_real_pocqi import parse_args as parse_score_only_args
 
 
 class _FakeRemoteMethod:
@@ -104,3 +109,26 @@ def test_modal_runner_argv_preserves_seeded_subset() -> None:
     assert args.question_sample_seed == 20260824
     assert args.modal_concurrency == 8
     assert args.reveal_generator_identities is True
+
+
+def test_modal_score_only_argv_uses_individual_scoring_runner() -> None:
+    args = parse_score_only_args(
+        _score_only_runner_argv(
+            input_generations="generations.jsonl",
+            output_path="score_only.jsonl",
+            experiment_id="score-only",
+            run_id="run-1",
+            models=("Qwen-test",),
+            num_questions=200,
+            question_sample_seed=42,
+            max_output_tokens=512,
+            max_concurrency=16,
+            retries=2,
+            retry_delay_seconds=1,
+            force=False,
+        )
+    )
+    assert args.judge_models == ["modal/Qwen-test"]
+    assert args.num_questions == 200
+    assert args.question_sample_seed == 42
+    assert args.output_path.name == "score_only.jsonl"

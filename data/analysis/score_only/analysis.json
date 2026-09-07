@@ -1,0 +1,254 @@
+{
+  "comparison_with_asr": {
+    "candidate_pair_agreement_excluding_score_only_ties": 0.7931013318603081,
+    "cells": 1600,
+    "mean_absolute_rank_difference": 1.457890625,
+    "mean_cell_spearman_r": 0.6082845660211442,
+    "reference_first_in_score_only_top_rate": 0.67625,
+    "reference_pair_tie_rate": 0.0,
+    "same_unique_first_rate": 0.28875,
+    "score_only_pair_tie_rate": 0.2726339285714286
+  },
+  "comparison_with_combined_rubric_sum_ranking": {
+    "candidate_pair_agreement_excluding_score_only_ties": 0.814727463312369,
+    "cells": 1600,
+    "mean_absolute_rank_difference": 1.37515625,
+    "mean_cell_spearman_r": 0.6225718446636699,
+    "reference_first_in_score_only_top_rate": 0.74125,
+    "reference_pair_tie_rate": 0.11285714285714285,
+    "same_unique_first_rate": 0.251875,
+    "score_only_pair_tie_rate": 0.2726339285714286
+  },
+  "design": {
+    "asr_definition": "explicit answer-selection ranking from the matched combined rubric-and-ranking condition",
+    "candidates_per_prompt": 1,
+    "generators": 8,
+    "judges": 8,
+    "logical_judgments": 12800,
+    "questions": 200,
+    "ranking_method": "descending five-axis score sum; average midranks for ties",
+    "ranking_requested": false
+  },
+  "generator_ranking": [
+    {
+      "asr_mean_rank": 1.89375,
+      "combined_rubric_mean_rank": 2.0378125,
+      "generator": "claude-opus-5",
+      "score_only_mean_rank": 3.0559375,
+      "score_only_mean_sum": 21.8863125
+    },
+    {
+      "asr_mean_rank": 3.393125,
+      "combined_rubric_mean_rank": 3.356875,
+      "generator": "gpt-5.6-terra",
+      "score_only_mean_rank": 3.41875,
+      "score_only_mean_sum": 21.686999999999998
+    },
+    {
+      "asr_mean_rank": 4.32,
+      "combined_rubric_mean_rank": 4.3665625,
+      "generator": "gpt-5.6-sol",
+      "score_only_mean_rank": 3.7871875,
+      "score_only_mean_sum": 21.392625
+    },
+    {
+      "asr_mean_rank": 3.904375,
+      "combined_rubric_mean_rank": 3.9053125,
+      "generator": "gemini-3.7-flash",
+      "score_only_mean_rank": 4.2675,
+      "score_only_mean_sum": 20.5818125
+    },
+    {
+      "asr_mean_rank": 4.265625,
+      "combined_rubric_mean_rank": 4.1559375,
+      "generator": "claude-sonnet-5",
+      "score_only_mean_rank": 4.441875,
+      "score_only_mean_sum": 20.5245
+    },
+    {
+      "asr_mean_rank": 4.605625,
+      "combined_rubric_mean_rank": 4.60375,
+      "generator": "gemini-3.1-pro-preview",
+      "score_only_mean_rank": 4.56,
+      "score_only_mean_sum": 20.367625
+    },
+    {
+      "asr_mean_rank": 6.58375,
+      "combined_rubric_mean_rank": 6.5865625,
+      "generator": "Qwen/Qwen3.5-122B-A10B-FP8",
+      "score_only_mean_rank": 6.03125,
+      "score_only_mean_sum": 18.3584375
+    },
+    {
+      "asr_mean_rank": 7.03375,
+      "combined_rubric_mean_rank": 6.9871875,
+      "generator": "Qwen/Qwen3.8-27B-FP8",
+      "score_only_mean_rank": 6.4375,
+      "score_only_mean_sum": 17.3888125
+    }
+  ],
+  "score_only_matched_self_preference": {
+    "by_judge": [
+      {
+        "judge": "Qwen/Qwen3.5-122B-A10B-FP8",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            1.2369811127765669,
+            1.4060188872234334
+          ],
+          "mean": 1.3215000000000001,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -1.6512187246513959,
+            -1.3173527039200326
+          ],
+          "mean": -1.4842857142857142,
+          "n": 200
+        }
+      },
+      {
+        "judge": "Qwen/Qwen3.8-27B-FP8",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            1.0469933965813836,
+            1.2735494605614737
+          ],
+          "mean": 1.1602714285714286,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -1.5148238183648168,
+            -1.0280333244923263
+          ],
+          "mean": -1.2714285714285716,
+          "n": 200
+        }
+      },
+      {
+        "judge": "claude-opus-5",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            -0.19546345473043622,
+            -0.14387940241242095
+          ],
+          "mean": -0.16967142857142858,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -2.046504900958734,
+            -1.7899236704698378
+          ],
+          "mean": -1.9182142857142859,
+          "n": 200
+        }
+      },
+      {
+        "judge": "claude-sonnet-5",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            0.05121235203417883,
+            0.15724479082296405
+          ],
+          "mean": 0.10422857142857145,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -0.8471442980937821,
+            -0.3742842733347892
+          ],
+          "mean": -0.6107142857142857,
+          "n": 200
+        }
+      },
+      {
+        "judge": "gemini-3.1-pro-preview",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            -0.2122685459950116,
+            -0.04721716829070262
+          ],
+          "mean": -0.1297428571428571,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -0.5708331816578858,
+            -0.057738246913542846
+          ],
+          "mean": -0.3142857142857143,
+          "n": 200
+        }
+      },
+      {
+        "judge": "gemini-3.7-flash",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            0.8572212843733079,
+            0.9469787156266923
+          ],
+          "mean": 0.9021000000000001,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -0.9860676035719416,
+            -0.4939323964280584
+          ],
+          "mean": -0.74,
+          "n": 200
+        }
+      },
+      {
+        "judge": "gpt-5.6-sol",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            0.13635245248925207,
+            0.1979904046536051
+          ],
+          "mean": 0.16717142857142858,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -2.5864921612511806,
+            -2.3042221244631045
+          ],
+          "mean": -2.4453571428571426,
+          "n": 200
+        }
+      },
+      {
+        "judge": "gpt-5.6-terra",
+        "mean_score_bias_0_to_5": {
+          "ci95": [
+            -0.9361106885640912,
+            -0.834632168578766
+          ],
+          "mean": -0.8853714285714286,
+          "n": 200
+        },
+        "rank_effect": {
+          "ci95": [
+            -1.7842772919781194,
+            -1.4242941365933097
+          ],
+          "mean": -1.6042857142857145,
+          "n": 200
+        }
+      }
+    ],
+    "pooled": {
+      "ci95": [
+        -1.3736348510016287,
+        -1.2235080061412287
+      ],
+      "mean": -1.2985714285714287,
+      "n": 200
+    }
+  }
+}

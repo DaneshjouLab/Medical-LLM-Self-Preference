@@ -35,6 +35,12 @@ from judging.run_real_pocqi_judging import (
     parse_args,
     run,
 )
+from judging.score_only_real_pocqi import (
+    DEFAULT_EXPERIMENT_ID as DEFAULT_SCORE_ONLY_EXPERIMENT_ID,
+    DEFAULT_OUTPUT_PATH as DEFAULT_SCORE_ONLY_OUTPUT_PATH,
+    parse_args as parse_score_only_args,
+    run as run_score_only,
+)
 
 
 APP_NAME = "medical-real-pocqi-qwen-judging"
@@ -410,6 +416,43 @@ def _runner_argv(
     return argv
 
 
+def _score_only_runner_argv(
+    *,
+    input_generations: str,
+    output_path: str,
+    experiment_id: str,
+    run_id: str,
+    models: Sequence[str],
+    num_questions: int,
+    question_sample_seed: int,
+    max_output_tokens: int,
+    max_concurrency: int,
+    retries: int,
+    retry_delay_seconds: float,
+    force: bool,
+) -> list[str]:
+    argv = [
+        "--input-generations", input_generations,
+        "--output-path", output_path,
+        "--generator-models", *DEFAULT_GENERATOR_MODELS,
+        "--judge-models", *(f"modal/{model}" for model in models),
+        "--num-questions", str(num_questions),
+        "--question-sample-seed", str(question_sample_seed),
+        "--experiment-id", experiment_id,
+        "--temperature", "0",
+        "--max-output-tokens", str(max_output_tokens),
+        "--max-concurrency", str(max_concurrency),
+        "--modal-concurrency", str(max_concurrency),
+        "--retries", str(retries),
+        "--retry-delay-seconds", str(retry_delay_seconds),
+    ]
+    if run_id:
+        argv.extend(("--run-id", run_id))
+    if force:
+        argv.append("--force")
+    return argv
+
+
 @app.local_entrypoint()
 def main(
     input_generations: str = str(DEFAULT_GENERATIONS_PATH),
@@ -432,6 +475,9 @@ def main(
     direct_run_id: str = "",
     direct_max_output_tokens: int = 1024,
     reveal_generator_identities: bool = False,
+    score_only: bool = False,
+    score_only_output_path: str = str(DEFAULT_SCORE_ONLY_OUTPUT_PATH),
+    score_only_experiment_id: str = DEFAULT_SCORE_ONLY_EXPERIMENT_ID,
     force: bool = False,
 ) -> None:
     try:
@@ -482,6 +528,27 @@ def main(
         )
     exit_codes: list[int] = []
     try:
+        if score_only:
+            args = parse_score_only_args(
+                _score_only_runner_argv(
+                    input_generations=input_generations,
+                    output_path=score_only_output_path,
+                    experiment_id=score_only_experiment_id,
+                    run_id=run_id,
+                    models=selected_models,
+                    num_questions=num_questions,
+                    question_sample_seed=(
+                        42 if question_sample_seed < 0 else question_sample_seed
+                    ),
+                    max_output_tokens=max_output_tokens,
+                    max_concurrency=max_concurrency,
+                    retries=retries,
+                    retry_delay_seconds=retry_delay_seconds,
+                    force=force,
+                )
+            )
+            exit_codes.append(run_score_only(args, model_caller=caller))
+            workloads = []
         for (
             workload_experiment_id,
             workload_run_id,

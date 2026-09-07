@@ -1,5 +1,6 @@
 data/real_pcoqi/judgements/rubric_and_model_ranking.jsonl filter=lfs diff=lfs merge=lfs -text
 data/real_pcoqi/judgements/direct_ranking.jsonl filter=lfs diff=lfs merge=lfs -text
 data/real_pcoqi/judgements/identity_revealed_rubric_and_model_ranking.jsonl filter=lfs diff=lfs merge=lfs -text
+data/real_pcoqi/judgements/score_only.jsonl filter=lfs diff=lfs merge=lfs -text
 data/outputs/medsp1000/judgements/*.jsonl filter=lfs diff=lfs merge=lfs -text
 data/deprecated/pilots/judging/medsp1000/*.jsonl filter=lfs diff=lfs merge=lfs -text
