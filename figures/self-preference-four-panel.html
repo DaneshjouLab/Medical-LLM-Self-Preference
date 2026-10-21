@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Four-panel medical LLM self-preference figure</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --cardinal-dark: #65100f;
+        --negative: #a5a29c;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #77736f;
+        --line: #dedbd6;
+        --wash: #f7f6f3;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--white);
+      }
+
+      body {
+        width: 3591px;
+        height: 1050px;
+        padding: 0;
+        overflow-x: auto;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .paper-figure {
+        width: 3591px;
+        height: 1050px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: var(--white);
+      }
+
+      .panel {
+        min-width: 0;
+        height: 1050px;
+        padding: 36px 28px 22px;
+      }
+
+      .panel + .panel {
+        border-left: 3px dotted var(--muted);
+      }
+
+      .panel h2 {
+        min-height: 120px;
+        margin: 0 10px 8px;
+        color: var(--ink);
+        font-size: 52px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .panel-letter {
+        display: inline-block;
+        width: 1.45em;
+        color: var(--cardinal-dark);
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
+
+      .grid-line {
+        stroke: var(--line);
+        stroke-width: 1;
+      }
+
+      .axis-line {
+        stroke: var(--ink);
+        stroke-width: 1.25;
+      }
+
+      .reference-line {
+        stroke: var(--muted);
+        stroke-width: 1.25;
+        stroke-dasharray: 4 4;
+      }
+
+      .bar-positive {
+        fill: var(--cardinal);
+      }
+
+      .bar-negative {
+        fill: var(--negative);
+      }
+
+      .error-line {
+        stroke: var(--cardinal-dark);
+        stroke-width: 2;
+      }
+
+      .tick-label,
+      .category-label,
+      .axis-label,
+      .value-label {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .tick-label {
+        fill: var(--muted);
+        font-size: 34px;
+      }
+
+      .category-label {
+        fill: var(--ink);
+        font-size: 38px;
+      }
+
+      .axis-label {
+        fill: var(--body);
+        font-size: 38px;
+        font-weight: 700;
+      }
+
+      .x-axis-label {
+        font-size: 34px;
+      }
+
+      .value-label {
+        fill: var(--cardinal-dark);
+        font-size: 36px;
+        font-weight: 700;
+      }
+
+      @media print {
+        @page {
+          size: 13.68in 4in;
+          margin: 0;
+        }
+
+        body,
+        .paper-figure {
+          width: 13.68in;
+          height: 4in;
+        }
+
+        .paper-figure {
+          transform: scale(0.3657);
+          transform-origin: top left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="paper-figure" aria-label="Four-panel comparison of medical LLM self-preference measures">
+      <section class="panel">
+        <h2><span class="panel-letter">A.</span>Single-Turn Answer Rank Self-Preference</h2>
+        <svg id="rank-chart" viewBox="0 0 840 800" role="img" aria-label="Answer Rank Self-Preference by judge model"></svg>
+      </section>
+
+      <section class="panel">
+        <h2><span class="panel-letter">B.</span>Answer Score Bias</h2>
+        <svg id="score-chart" viewBox="0 0 840 800" role="img" aria-label="Answer Score Bias by judge model"></svg>
+      </section>
+
+      <section class="panel">
+        <h2><span class="panel-letter">C.</span>Own-Answer Win Rate</h2>
+        <svg id="win-chart" viewBox="0 0 840 800" role="img" aria-label="Own-Answer Win Rate by judge model"></svg>
+      </section>
+
+      <section class="panel">
+        <h2><span class="panel-letter">D.</span>Multi-Turn Answer Rank Self-Preference</h2>
+        <svg id="turn-chart" viewBox="0 0 840 800" role="img" aria-label="Answer Rank Self-Preference by visible conversation turns"></svg>
+      </section>
+    </main>
+
+    <script>
+      const NS = "http://www.w3.org/2000/svg";
+      const width = 840;
+      const height = 800;
+      const margin = { top: 62, right: 140, bottom: 100, left: 300 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+
+      const charts = [
+        {
+          id: "rank-chart",
+          yLabel: "Judge model",
+          xLabel: "Answer Rank Self-Preference (positions)",
+          domain: [0, 3.2],
+          ticks: [0, 1, 2, 3],
+          decimals: 3,
+          data: [
+            ["GPT-5.6 Sol", 2.939, 2.84, 3.04],
+            ["GPT-5.6 Terra", 2.224, 2.12, 2.33],
+            ["Gemini 3.7 Flash", 1.236, 1.16, 1.32],
+            ["Claude Opus 5", 0.969, 0.92, 1.02],
+            ["Qwen 3.5 122B", 0.730, 0.61, 0.85],
+            ["Gemini 3.1 Pro", 0.683, 0.58, 0.79],
+            ["Claude Sonnet 5", 0.647, 0.53, 0.76],
+            ["Qwen 3.8 27B", 0.324, 0.23, 0.42]
+          ]
+        },
+        {
+          id: "score-chart",
+          yLabel: "Judge model",
+          xLabel: "Answer Score Bias (0–5 scale)",
+          domain: [-0.8, 0.8],
+          ticks: [-0.8, -0.4, 0, 0.4, 0.8],
+          reference: 0,
+          decimals: 2,
+          data: [
+            ["Gemini 3.7 Flash", 0.67, 0.65, 0.69],
+            ["Qwen 3.5 122B", 0.64, 0.60, 0.69],
+            ["Gemini 3.1 Pro", 0.55, 0.52, 0.59],
+            ["GPT-5.6 Sol", 0.32, 0.30, 0.35],
+            ["Claude Opus 5", 0.02, 0.00, 0.03],
+            ["Qwen 3.8 27B", 0.00, -0.05, 0.05],
+            ["Claude Sonnet 5", -0.09, -0.12, -0.07],
+            ["GPT-5.6 Terra", -0.75, -0.79, -0.71]
+          ]
+        },
+        {
+          id: "win-chart",
+          yLabel: "Judge model",
+          xLabel: "Own-Answer Win Rate (%)",
+          domain: [0, 100],
+          ticks: [0, 25, 50, 75, 100],
+          reference: 50,
+          suffix: "%",
+          decimals: 1,
+          data: [
+            ["Claude Opus 5", 99.4],
+            ["GPT-5.6 Terra", 93.7],
+            ["GPT-5.6 Sol", 89.5],
+            ["Gemini 3.7 Flash", 73.7],
+            ["Claude Sonnet 5", 59.8],
+            ["Gemini 3.1 Pro", 56.8],
+            ["Qwen 3.5 122B", 30.2],
+            ["Qwen 3.8 27B", 18.8]
+          ]
+        },
+        {
+          id: "turn-chart",
+          yLabel: "Visible conversation turns",
+          xLabel: "Answer Rank Self-Preference (positions)",
+          domain: [0, 0.8],
+          ticks: [0, 0.2, 0.4, 0.6, 0.8],
+          decimals: 2,
+          data: [
+            ["2 turns", 0.57, 0.49, 0.65],
+            ["4 turns", 0.53, 0.45, 0.60],
+            ["6 turns", 0.62, 0.54, 0.70],
+            ["8 turns", 0.61, 0.53, 0.69]
+          ]
+        }
+      ];
+
+      function make(tag, attributes = {}, text = "") {
+        const element = document.createElementNS(NS, tag);
+        Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, value));
+        if (text) element.textContent = text;
+        return element;
+      }
+
+      function signed(value, decimals) {
+        const formatted = Math.abs(value).toFixed(decimals);
+        if (value > 0) return `+${formatted}`;
+        if (value < 0) return `−${formatted}`;
+        return Number(value).toFixed(decimals);
+      }
+
+      function tickText(value, suffix = "") {
+        if (suffix) return `${value}${suffix}`;
+        const decimals = Number.isInteger(value) ? 0 : 1;
+        const formatted = Math.abs(value).toFixed(decimals);
+        return value < 0 ? `−${formatted}` : formatted;
+      }
+
+      function drawChart(config) {
+        const svg = document.getElementById(config.id);
+        const [minimum, maximum] = config.domain;
+        const scale = value => margin.left + ((value - minimum) / (maximum - minimum)) * plotWidth;
+        const zero = scale(Math.max(minimum, Math.min(maximum, 0)));
+        const band = plotHeight / config.data.length;
+        const barHeight = Math.min(46, band * 0.52);
+
+        svg.append(make("text", { x: 6, y: 42, class: "axis-label" }, config.yLabel));
+
+        config.ticks.forEach(tick => {
+          const x = scale(tick);
+          svg.append(make("line", {
+            x1: x,
+            x2: x,
+            y1: margin.top,
+            y2: margin.top + plotHeight,
+            class: "grid-line"
+          }));
+          svg.append(make("text", {
+            x,
+            y: margin.top + plotHeight + 34,
+            class: "tick-label",
+            "text-anchor": "middle"
+          }, tickText(tick, config.suffix)));
+        });
+
+        if (config.reference !== undefined) {
+          const referenceX = scale(config.reference);
+          svg.append(make("line", {
+            x1: referenceX,
+            x2: referenceX,
+            y1: margin.top,
+            y2: margin.top + plotHeight,
+            class: "reference-line"
+          }));
+        }
+
+        svg.append(make("line", {
+          x1: margin.left,
+          x2: margin.left + plotWidth,
+          y1: margin.top + plotHeight,
+          y2: margin.top + plotHeight,
+          class: "axis-line"
+        }));
+
+        config.data.forEach((datum, index) => {
+          const [label, value, low, high] = datum;
+          const centerY = margin.top + band * index + band / 2;
+          const valueX = scale(value);
+          const barX = Math.min(zero, valueX);
+          const barWidth = Math.max(1.5, Math.abs(valueX - zero));
+          const isNegative = value < 0;
+
+          svg.append(make("text", {
+            x: margin.left - 16,
+            y: centerY + 13,
+            class: "category-label",
+            "text-anchor": "end"
+          }, label));
+
+          svg.append(make("rect", {
+            x: barX,
+            y: centerY - barHeight / 2,
+            width: barWidth,
+            height: barHeight,
+            rx: 2,
+            class: isNegative ? "bar-negative" : "bar-positive"
+          }));
+
+          if (low !== undefined && high !== undefined) {
+            const lowX = scale(low);
+            const highX = scale(high);
+            svg.append(make("line", { x1: lowX, x2: highX, y1: centerY, y2: centerY, class: "error-line" }));
+            svg.append(make("line", { x1: lowX, x2: lowX, y1: centerY - 14, y2: centerY + 14, class: "error-line" }));
+            svg.append(make("line", { x1: highX, x2: highX, y1: centerY - 14, y2: centerY + 14, class: "error-line" }));
+          }
+
+          const valueText = config.suffix
+            ? `${value.toFixed(config.decimals)}${config.suffix}`
+            : signed(value, config.decimals);
+          svg.append(make("text", {
+            x: width - 8,
+            y: centerY + 13,
+            class: "value-label",
+            "text-anchor": "end"
+          }, valueText));
+        });
+
+        svg.append(make("text", {
+          x: margin.left + plotWidth / 2,
+          y: height - 18,
+          class: "axis-label x-axis-label",
+          "text-anchor": "middle"
+        }, config.xLabel));
+      }
+
+      charts.forEach(drawChart);
+    </script>
+  </body>
+</html>

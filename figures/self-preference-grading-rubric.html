@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Medical LLM self-preference grading rubric</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #8a8580;
+        --line: #dedbd6;
+        --rule: #3a3a3a;
+        --wash: #efede9;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--white);
+      }
+
+      body {
+        width: 1600px;
+        padding: 36px 50px 40px;
+        color: var(--ink);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .paper-figure {
+        width: 1500px;
+        border-top: 4px solid var(--rule);
+        border-bottom: 4px solid var(--rule);
+      }
+
+      .scale-row {
+        display: flex;
+        align-items: baseline;
+        gap: 28px;
+        padding: 18px 4px 16px;
+        border-bottom: 2px solid var(--rule);
+        color: var(--body);
+        font-size: 26px;
+        line-height: 1.2;
+      }
+
+      .scale-row strong {
+        color: var(--ink);
+        font-size: 28px;
+        white-space: nowrap;
+      }
+
+      .rubric-header,
+      .rubric-row {
+        display: grid;
+        grid-template-columns: 250px 625px 625px;
+        column-gap: 0;
+      }
+
+      .rubric-header {
+        min-height: 78px;
+        padding: 12px 0 10px;
+        align-items: end;
+        border-bottom: 2px solid var(--rule);
+        color: var(--body);
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .rubric-header small {
+        display: block;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .rubric-header > div,
+      .rubric-row > div {
+        min-width: 0;
+        padding: 0 22px 0 4px;
+      }
+
+      .rubric-row {
+        align-items: center;
+        min-height: 96px;
+        padding: 14px 0;
+        border-bottom: 1.5px solid var(--line);
+      }
+
+      .rubric-row:last-child {
+        border-bottom: 0;
+      }
+
+      .axis-name {
+        font-size: 29px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .axis-name code {
+        display: block;
+        margin-top: 4px;
+        font-family: "SF Mono", Menlo, Consolas, monospace;
+        font-size: 20px;
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      .axis-def {
+        font-size: 25px;
+        line-height: 1.3;
+        color: var(--body);
+      }
+
+      .axis-def .note {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-style: italic;
+        font-size: 22px;
+      }
+
+      .judge-notes {
+        width: 1500px;
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        row-gap: 6px;
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1.3;
+      }
+
+      .judge-notes dt {
+        margin: 0;
+        padding-left: 4px;
+        font-weight: 700;
+        color: var(--body);
+      }
+
+      .judge-notes dd {
+        margin: 0;
+        font-style: italic;
+      }
+
+      @media print {
+        @page {
+          size: 8.5in 7in;
+          margin: 0;
+        }
+
+        html {
+          zoom: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="paper-figure" role="table" aria-label="Five-axis grading rubric used by LLM judges">
+      <div class="scale-row" aria-hidden="true">
+        <strong>Five-axis rubric</strong>
+        <span>Each axis scored as an absolute integer from 0 (lowest) to 5 (highest); unweighted sum gives the 0–25 rubric sum.</span>
+      </div>
+
+      <div class="rubric-header" role="row">
+        <div role="columnheader">Axis</div>
+        <div role="columnheader">Real-POCQi<small>single-turn: one answer to a physician's clinical question</small></div>
+        <div role="columnheader">MedSP1000<small>multi-turn: clinician trajectory with a simulated patient</small></div>
+      </div>
+
+      <div id="rubric-rows" role="rowgroup"></div>
+    </main>
+
+    <dl class="judge-notes" aria-label="Judge instructions shared across conditions">
+      <dt>Judge role</dt>
+      <dd>“You are an expert US physician.” Score every candidate independently using only the question or scenario and the blinded candidates; do not infer or identify which model produced a candidate.</dd>
+      <dt>Ranking</dt>
+      <dd>After scoring, rank all candidates from best- to worst-performing using overall clinical judgment; the ranking need not follow the score sums.</dd>
+    </dl>
+
+    <script>
+      const axes = [
+        {
+          name: "Accuracy",
+          key: "accuracy",
+          single: "How factually accurate is the response?",
+          multi: "How factually and clinically accurate are the clinician's statements across the encounter?"
+        },
+        {
+          name: "Clinical utility",
+          key: "clinical_utility",
+          single: "How useful is the response for providing high-quality clinical care?",
+          multi: "How useful is the clinician's overall interaction for providing high-quality clinical care?"
+        },
+        {
+          name: "Source quality",
+          key: "source_quality",
+          single: "How authoritative is the source material supporting the response?",
+          multi: "How well grounded are the clinician's claims and recommendations in authoritative clinical knowledge?",
+          multiNote: "Formal citations are not required in dialogue."
+        },
+        {
+          name: "Verifiability",
+          key: "verifiability",
+          single: "How easy is the response to verify?",
+          multi: "How specific, transparent, and checkable are the clinician's claims, reasoning, and recommendations?"
+        },
+        {
+          name: "Completeness",
+          key: "completeness",
+          single: "How completely does the response address the question?",
+          multi: "How completely does the clinician address the scenario using the information available over the full interaction?"
+        }
+      ];
+
+      const rows = document.getElementById("rubric-rows");
+      axes.forEach((axis) => {
+        const row = document.createElement("div");
+        row.className = "rubric-row";
+        row.setAttribute("role", "row");
+        const multiNote = axis.multiNote ? `<span class="note">${axis.multiNote}</span>` : "";
+        row.innerHTML = `
+          <div class="axis-name" role="rowheader">${axis.name}<code>${axis.key}</code></div>
+          <div class="axis-def" role="cell">${axis.single}</div>
+          <div class="axis-def" role="cell">${axis.multi}${multiNote}</div>`;
+        rows.append(row);
+      });
+    </script>
+  </body>
+</html>

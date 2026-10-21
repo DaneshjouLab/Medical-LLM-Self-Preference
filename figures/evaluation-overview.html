@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Evaluation overview for medical LLM self-preference</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --cardinal-dark: #65100f;
+        --cardinal-mid: #a8524d;
+        --cardinal-tint: #f6ecea;
+        --cardinal-tint-line: #e2c4c0;
+        --slate: #4a4a4a;
+        --slate-tint: #efeeec;
+        --slate-tint-line: #cfcbc5;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #8a8580;
+        --line: #dedbd6;
+        --wash: #f7f6f3;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--white);
+      }
+
+      body {
+        width: 1600px;
+        padding: 30px 50px 34px;
+        color: var(--ink);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .figure {
+        width: 1500px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        column-gap: 24px;
+        row-gap: 14px;
+      }
+
+      .section-label {
+        grid-column: 1 / -1;
+        padding: 0 4px 6px;
+        border-bottom: 2px solid var(--ink);
+        color: var(--ink);
+        font-size: 21px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .section-label span {
+        margin-left: 14px;
+        color: var(--muted);
+        font-size: 18px;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+
+      /* Setup band */
+      .setup {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 300px;
+        column-gap: 24px;
+      }
+
+      .setup-card {
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px 16px;
+        background: var(--white);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .setup-card h2 {
+        margin: 0 0 2px;
+        font-size: 23px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .setup-card h2 span {
+        margin-left: 10px;
+        color: var(--muted);
+        font-size: 17px;
+        font-weight: 400;
+      }
+
+      .setup-body {
+        flex: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 12px;
+        margin-top: 10px;
+        align-items: stretch;
+      }
+
+      .block {
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 13px 11px;
+        background: var(--wash);
+      }
+
+      .block-label {
+        margin: 0 0 3px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .block p {
+        margin: 0;
+        color: var(--body);
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .chips {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+      }
+
+      .chip {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 4px 0;
+        border-radius: 5px;
+        background: var(--slate-tint-line);
+        color: var(--ink);
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .turns {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+      }
+
+      .turn {
+        flex: 1 1 0;
+        padding: 4px 0;
+        border: 1.5px solid var(--slate-tint-line);
+        border-radius: 5px;
+        color: var(--body);
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .judgment {
+        border: 1.5px solid var(--cardinal-tint-line);
+        border-radius: 12px;
+        padding: 14px 16px 16px;
+        background: var(--cardinal-tint);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .judgment h2 {
+        margin: 0 0 8px;
+        font-size: 23px;
+        font-weight: 700;
+        color: var(--cardinal-dark);
+      }
+
+      .judgment p {
+        margin: 0;
+        color: var(--body);
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .judgment .yield {
+        margin-top: auto;
+        padding-top: 10px;
+      }
+
+      .yield-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 6px;
+        padding: 7px 12px;
+        border-radius: 6px;
+        background: var(--white);
+        border: 1.5px solid var(--cardinal-tint-line);
+        color: var(--cardinal-dark);
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .n {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--cardinal-dark);
+        color: var(--white);
+        font-size: 14px;
+        font-weight: 700;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      /* Metric columns */
+      .head {
+        border-radius: 12px;
+        padding: 18px 22px 20px;
+        color: var(--white);
+        min-height: 122px;
+      }
+
+      .head h2 {
+        margin: 0 0 6px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 27px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .head h2 .tag {
+        padding: 3px 9px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1.5px solid rgba(255, 255, 255, 0.55);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .head p {
+        margin: 0;
+        font-size: 19px;
+        line-height: 1.3;
+        opacity: 0.92;
+      }
+
+      .head.m1 {
+        background: var(--cardinal-dark);
+      }
+
+      .head.m2 {
+        background: var(--cardinal);
+      }
+
+      .head.m3 {
+        background: var(--cardinal-mid);
+      }
+
+      .panel {
+        border: 1.5px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px 16px;
+        background: var(--white);
+      }
+
+      .panel-label {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .block-title {
+        margin: 0 0 3px;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--cardinal);
+      }
+
+      .block.accent {
+        background: var(--cardinal-tint);
+        border-color: var(--cardinal-tint-line);
+      }
+
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 8px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr) auto;
+        column-gap: 10px;
+        align-items: start;
+      }
+
+      .step p {
+        margin: 0;
+        color: var(--body);
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .step p b {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .ex {
+        padding: 2px 8px;
+        border-radius: 5px;
+        background: var(--white);
+        border: 1.5px solid var(--cardinal-tint-line);
+        font-family: "SF Mono", Menlo, Consolas, monospace;
+        font-size: 15px;
+        line-height: 1.4;
+        color: var(--cardinal-dark);
+        white-space: nowrap;
+      }
+
+      .ex-head {
+        margin: 0 0 4px;
+        color: var(--muted);
+        font-size: 15px;
+        font-style: italic;
+      }
+
+      .formula {
+        margin: 8px 0 0;
+        padding: 9px 12px;
+        border-radius: 6px;
+        background: var(--white);
+        border: 1.5px solid var(--cardinal-tint-line);
+        font-family: "SF Mono", Menlo, Consolas, monospace;
+        font-size: 16px;
+        line-height: 1.45;
+        color: var(--ink);
+        white-space: pre;
+      }
+
+      .formula b {
+        color: var(--cardinal);
+        font-weight: 700;
+      }
+
+      .fine {
+        margin-top: 7px !important;
+        font-size: 16px !important;
+        color: var(--muted) !important;
+      }
+
+      .arrow {
+        margin: 5px 0;
+        color: var(--muted);
+        font-size: 18px;
+        text-align: center;
+        line-height: 1;
+      }
+
+      .reported {
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .reported span {
+        flex: 1 1 0;
+        padding: 5px 0;
+        border-radius: 5px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        background: var(--cardinal-tint-line);
+        color: var(--cardinal-dark);
+      }
+
+      .reported span.off {
+        background: transparent;
+        border: 1.5px dashed var(--line);
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      @media print {
+        @page {
+          size: 8.5in 8.6in;
+          margin: 0;
+        }
+
+        html {
+          zoom: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="figure" role="img" aria-label="Overview of the judging setup and the three self-preference metrics derived from it">
+      <div class="section-label">Judging setup <span>every judge is also a generator; identities hidden, presentation order randomized</span></div>
+
+      <div class="setup">
+        <div class="setup-card">
+          <h2>Single-turn <span>Real-POCQi · 620 questions · 8 models</span></h2>
+          <div class="setup-body">
+            <div class="block">
+              <p class="block-label">Judge sees</p>
+              <p>One clinical question and all eight candidate answers</p>
+              <div class="chips">
+                <span class="chip">A</span><span class="chip">B</span><span class="chip">C</span><span class="chip">D</span>
+                <span class="chip">E</span><span class="chip">F</span><span class="chip">G</span><span class="chip">H</span>
+              </div>
+            </div>
+            <div class="block">
+              <p class="block-label">Scale</p>
+              <p>620 questions × 8 judges<br />4,960 judgments, each covering 8 answers</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-card">
+          <h2>Multi-turn <span>MedSP1000 · 200 scenarios · 6 models</span></h2>
+          <div class="setup-body">
+            <div class="block">
+              <p class="block-label">Judge sees</p>
+              <p>One standardized-patient scenario and six clinician transcripts, cut to a fixed number of visible turns</p>
+              <div class="chips">
+                <span class="chip">A</span><span class="chip">B</span><span class="chip">C</span>
+                <span class="chip">D</span><span class="chip">E</span><span class="chip">F</span>
+              </div>
+            </div>
+            <div class="block">
+              <p class="block-label">Scale</p>
+              <p>200 scenarios × 6 judges × 4 lengths<br />4,800 judgments</p>
+              <div class="turns">
+                <span class="turn">2 turns</span><span class="turn">4 turns</span><span class="turn">6 turns</span><span class="turn">8 turns</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="judgment">
+          <h2>One judgment yields</h2>
+          <p>The judge scores every candidate on accuracy, clinical utility, source quality, verifiability, and completeness, then ranks the full set.</p>
+          <div class="yield">
+            <div class="yield-item"><span class="n">1</span>Five axis scores per candidate, 0–5</div>
+            <div class="yield-item"><span class="n">2</span>One strict ranking of all candidates</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Self-preference metrics <span>each compares how the judge treats its own answer with how other judges treat that same answer</span></div>
+
+      <!-- Headers -->
+      <div class="head m1">
+        <h2>Answer Rank Bias <span class="tag">Primary</span></h2>
+        <p>How many positions higher a judge ranks its own answer than other judges rank it</p>
+      </div>
+      <div class="head m2">
+        <h2>Answer Score Bias</h2>
+        <p>How much higher a judge scores its own answer than other judges score it</p>
+      </div>
+      <div class="head m3">
+        <h2>Own-Answer Win Rate</h2>
+        <p>How often a judge places its own answer above a competitor</p>
+      </div>
+
+      <!-- Computation panels -->
+      <div class="panel">
+        <p class="panel-label">Computation</p>
+        <p class="ex-head">For one question and one judge, say judge C. Example values in boxes.</p>
+        <div class="block">
+          <div class="steps">
+            <div class="step"><span class="n">1</span><p>Find <b>C's own answer</b> among the candidates. C does not know which one it is.</p><span class="ex">answer #5</span></div>
+            <div class="step"><span class="n">2</span><p>In <b>C's ranking</b>, where did C place that answer?</p><span class="ex">2nd of 8</span></div>
+            <div class="step"><span class="n">3</span><p>In the <b>other judges' rankings</b>, where did they place the same answer, on average?</p><span class="ex">4.5th of 8</span></div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block accent">
+          <p class="block-label">Answer rank bias</p>
+          <div class="formula">step 3 − step 2
+= <b>4.5 − 2 = +2.5 positions</b></div>
+          <p class="fine">Rank 1 is best, so a positive value means C ranks its own answer higher than others do. Averaged over all questions, with judge-by-generator fixed effects to remove presentation-position effects.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block">
+          <p class="block-label">Output</p>
+          <p>Positions on the candidate list. 0 = no bias; positive = favors own.</p>
+          <div class="reported"><span>Single-turn</span><span>Multi-turn, per length</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-label">Computation</p>
+        <p class="ex-head">For one question and one judge, say judge C. Example values in boxes.</p>
+        <div class="block">
+          <div class="steps">
+            <div class="step"><span class="n">1</span><p>Find <b>C's own answer</b> among the candidates. C does not know which one it is.</p><span class="ex">answer #5</span></div>
+            <div class="step"><span class="n">2</span><p>Average <b>C's five axis scores</b> for that answer.</p><span class="ex">4.2 / 5</span></div>
+            <div class="step"><span class="n">3</span><p>Average the <b>other judges' five axis scores</b> for the same answer.</p><span class="ex">3.6 / 5</span></div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block accent">
+          <p class="block-label">Answer score bias</p>
+          <div class="formula">step 2 − step 3
+= <b>4.2 − 3.6 = +0.6 points</b></div>
+          <p class="fine">Higher score is better, so a positive value means C scores its own answer higher than others do. Averaged over all questions. Judges calibrate the 0–5 rubric differently, so compare within a judge, not across judges.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block">
+          <p class="block-label">Output</p>
+          <p>Points on the 0–5 scale. 0 = no bias; positive = favors own.</p>
+          <div class="reported"><span>Single-turn</span><span class="off">Multi-turn</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="panel-label">Computation</p>
+        <p class="ex-head">For one question and one judge, say judge C. Example values in boxes.</p>
+        <div class="block">
+          <div class="steps">
+            <div class="step"><span class="n">1</span><p>Find <b>C's own answer</b> among the candidates. C does not know which one it is.</p><span class="ex">answer #5</span></div>
+            <div class="step"><span class="n">2</span><p>In <b>C's ranking</b>, pair that answer with each of the other candidates.</p><span class="ex">7 pairs</span></div>
+            <div class="step"><span class="n">3</span><p>Count the pairs where C placed <b>its own answer above</b> the competitor.</p><span class="ex">5 of 7</span></div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block accent">
+          <p class="block-label">Own-answer win rate</p>
+          <div class="formula">step 3 ÷ step 2
+= <b>5 ÷ 7 = 71%</b></div>
+          <p class="fine">Uses only C's own ranking, so it reflects both self-preference and how good the answer actually is. Averaged over all questions.</p>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="block">
+          <p class="block-label">Output</p>
+          <p>Percentage of competitors beaten. 50% = coin flip; 100% = always first.</p>
+          <div class="reported"><span>Single-turn</span><span class="off">Multi-turn</span></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

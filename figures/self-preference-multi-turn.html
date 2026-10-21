@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Multi-turn answer rank bias</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --cardinal-dark: #65100f;
+        --cardinal-mid: #b26b66;
+        --negative: #a5a29c;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #8a8580;
+        --line: #dedbd6;
+        --rule: #3a3a3a;
+        --wash: #efede9;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--white);
+      }
+
+      body {
+        width: 1600px;
+        padding: 36px 50px 40px;
+        color: var(--ink);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .paper-figure {
+        width: 1500px;
+        border-top: 4px solid var(--rule);
+        border-bottom: 4px solid var(--rule);
+      }
+
+      .result-header,
+      .result-row {
+        display: grid;
+        grid-template-columns: 240px 250px 1fr 1fr 1fr 1fr;
+        align-items: center;
+      }
+
+      .result-header {
+        height: 78px;
+        border-bottom: 2px solid var(--rule);
+        color: var(--body);
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .result-header > div,
+      .result-row > div {
+        min-width: 0;
+      }
+
+      .turn-header {
+        text-align: center;
+      }
+
+      .turn-header small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 22px;
+        font-weight: 400;
+      }
+
+      .result-row {
+        height: 60px;
+        border-bottom: 1.5px solid var(--line);
+      }
+
+      .result-row:last-child {
+        border-bottom: 0;
+      }
+
+      .result-row.pooled {
+        height: 78px;
+        border-top: 2px solid var(--rule);
+      }
+
+      .model-name {
+        padding-left: 4px;
+        font-size: 29px;
+        white-space: nowrap;
+      }
+
+      .pooled .model-name {
+        font-weight: 700;
+      }
+
+      .divider {
+        border-left: 1.5px solid #b8b4ae;
+        padding-left: 20px;
+        align-self: stretch;
+      }
+
+      .result-header .divider {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .turn-cell {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        column-gap: 12px;
+        align-items: center;
+        align-content: center;
+        padding-left: 16px;
+        padding-right: 14px;
+      }
+
+      .bar-track {
+        position: relative;
+        height: 22px;
+        border-radius: 4px;
+        background: var(--wash);
+      }
+
+      .bar-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: var(--w);
+        min-width: 4px;
+        border-radius: 4px;
+        background: var(--cardinal);
+      }
+
+      .ci-whisker {
+        position: absolute;
+        top: 50%;
+        left: var(--lo);
+        width: calc(var(--hi) - var(--lo));
+        height: 2px;
+        margin-top: -1px;
+        background: var(--ink);
+      }
+
+      .ci-whisker::before,
+      .ci-whisker::after {
+        content: "";
+        position: absolute;
+        top: -5px;
+        width: 2px;
+        height: 12px;
+        background: var(--ink);
+      }
+
+      .ci-whisker::before {
+        left: 0;
+      }
+
+      .ci-whisker::after {
+        right: 0;
+      }
+
+      .metric-value {
+        color: var(--ink);
+        font-size: 28px;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .metric-ci {
+        grid-column: 1 / -1;
+        margin-top: 0;
+        text-align: right;
+        color: var(--muted);
+        font-size: 16px;
+        font-weight: 400;
+        white-space: nowrap;
+      }
+
+      .scale-row {
+        width: 1500px;
+        display: grid;
+        grid-template-columns: 240px 250px 1fr 1fr 1fr 1fr;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 22px;
+        font-style: italic;
+      }
+
+      .scale-row span {
+        padding-left: 24px;
+      }
+
+      @media print {
+        @page {
+          size: 8.5in 5.3in;
+          margin: 0;
+        }
+
+        html {
+          zoom: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="paper-figure" role="table" aria-label="Multi-turn answer rank bias by model and number of visible conversation turns">
+      <div class="result-header" role="row">
+        <div class="model-name" role="columnheader" style="font-size: 28px">Model / judge</div>
+        <div class="turn-header" role="columnheader">Mean<small>across 2–8 turns</small></div>
+        <div class="turn-header divider" role="columnheader">2 turns<small>answer rank bias</small></div>
+        <div class="turn-header" role="columnheader">4 turns<small>answer rank bias</small></div>
+        <div class="turn-header" role="columnheader">6 turns<small>answer rank bias</small></div>
+        <div class="turn-header" role="columnheader">8 turns<small>answer rank bias</small></div>
+      </div>
+
+      <div id="result-rows" role="rowgroup"></div>
+    </main>
+
+    <div class="scale-row" aria-hidden="true">
+      <span style="grid-column: 2 / span 4">bars scaled 0 to 1.2 positions; mean is the unweighted average of the four turn counts</span>
+    </div>
+
+    <script>
+      const results = [
+        { model: "GPT-5.6 Sol", turns: [0.77, 0.73, 0.87, 1.2] },
+        { model: "GPT-5.6 Terra", turns: [0.87, 0.72, 0.86, 0.9] },
+        { model: "Gemini 3.7 Flash", turns: [0.78, 0.68, 0.75, 0.8] },
+        { model: "Claude Opus 5", turns: [0.1, 0.46, 0.64, 0.47] },
+        { model: "Qwen 3.5 122B", turns: [0.62, 0.38, 0.53, 0.41] },
+        { model: "Gemini 3.1 Pro", turns: [1.05, 0.67, 0.67, 0.65] },
+        { model: "Claude Sonnet 5", turns: [0.04, 0.35, 0.39, 0.37] },
+        { model: "Qwen 3.8 27B", turns: [0.32, 0.21, 0.24, 0.11] }
+      ];
+
+      // Pooled across all judges, with 95% CI (from the four-panel figure).
+      const pooled = {
+        model: "All judges",
+        turns: [0.57, 0.53, 0.62, 0.61],
+        ci: [[0.49, 0.65], [0.45, 0.6], [0.54, 0.7], [0.53, 0.69]]
+      };
+
+      const TURN_MAX = 1.2;
+      const mean = r => r.turns.reduce((a, b) => a + b, 0) / r.turns.length;
+
+      function pct(value) {
+        return `${(value / TURN_MAX) * 100}%`;
+      }
+
+      function signed(value, digits) {
+        const fixed = Math.abs(value).toFixed(digits);
+        return value < 0 ? `â${fixed}` : `+${fixed}`;
+      }
+
+            function turnCell(value, ci, divider) {
+        const whisker = ci ? `<span class="ci-whisker" style="--lo: ${pct(ci[0])}; --hi: ${pct(ci[1])}"></span>` : "";
+        const ciText = ci ? `<span class="metric-ci">[${signed(ci[0], 2)}, ${signed(ci[1], 2)}]</span>` : "";
+        return `<div class="turn-cell${divider ? " divider" : ""}" role="cell">
+          <span class="bar-track"><span class="bar-fill" style="--w: ${pct(Math.max(value, 0))}"></span>${whisker}</span>
+          <span class="metric-value">${signed(value, 2)}</span>${ciText}
+        </div>`;
+      }
+
+      const rows = document.getElementById("result-rows");
+      function addRow(result, extraClass) {
+        const row = document.createElement("div");
+        row.className = `result-row${extraClass ? ` ${extraClass}` : ""}`;
+        row.setAttribute("role", "row");
+        row.innerHTML = `<div class="model-name" role="rowheader">${result.model}</div>${turnCell(mean(result), result.meanCi || null, false)}${result.turns.map((value, i) => turnCell(value, result.ci ? result.ci[i] : null, i === 0)).join("")}`;
+        rows.append(row);
+      }
+      // Judges sorted by mean answer rank bias across turn counts, highest first.
+      [...results].sort((a, b) => mean(b) - mean(a)).forEach(result => addRow(result));
+      addRow(pooled, "pooled");
+    </script>
+  </body>
+</html>

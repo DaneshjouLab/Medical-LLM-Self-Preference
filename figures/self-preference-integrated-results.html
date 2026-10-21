@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Integrated medical LLM self-preference results</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --cardinal-dark: #65100f;
+        --cardinal-mid: #b26b66;
+        --cardinal-soft: #d9aaa6;
+        --negative: #a5a29c;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #77736f;
+        --line: #dedbd6;
+        --wash: #f1f0ed;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 2048px;
+        height: 914px;
+        margin: 0;
+        overflow: hidden;
+        background: var(--white);
+      }
+
+      body {
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .paper-figure {
+        width: 1960px;
+        margin: 30px 44px 0;
+        border-top: 5px solid var(--ink);
+        border-bottom: 5px solid var(--ink);
+      }
+
+      .result-header,
+      .result-row,
+      .direction-row {
+        display: grid;
+        grid-template-columns: 310px 400px 450px 280px 520px;
+      }
+
+      .result-header {
+        height: 108px;
+        align-items: center;
+        border-bottom: 3px solid var(--ink);
+        color: var(--body);
+        font-size: 27px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .result-header > div,
+      .result-row > div {
+        min-width: 0;
+        padding-inline: 13px;
+      }
+
+      .metric-header {
+        text-align: center;
+      }
+
+      .turn-header {
+        align-self: stretch;
+        padding-top: 19px;
+        text-align: center;
+      }
+
+      .turn-labels {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        color: var(--muted);
+        font-size: 19px;
+        font-weight: 400;
+      }
+
+      .result-row {
+        height: 84px;
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .result-row:last-child {
+        border-bottom: 0;
+      }
+
+      .model-name {
+        color: var(--ink);
+        font-size: 29px;
+        white-space: nowrap;
+      }
+
+      .metric-cell {
+        display: grid;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .rank-cell {
+        grid-template-columns: 178px 70px 116px;
+      }
+
+      .score-cell {
+        position: relative;
+        height: 84px;
+        grid-template-columns: 188px 65px 158px;
+      }
+
+      .score-cell::before {
+        content: "";
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        bottom: 0;
+        left: 107px;
+        width: 1.5px;
+        background: var(--muted);
+      }
+
+      .win-cell {
+        grid-template-columns: 176px 70px;
+      }
+
+      .bar-track {
+        position: relative;
+        height: 27px;
+        overflow: hidden;
+        border-radius: 4px;
+        background: var(--wash);
+      }
+
+      .bar-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: var(--w);
+        min-width: 3px;
+        border-radius: inherit;
+        background: var(--cardinal);
+      }
+
+      .rank-cell .bar-fill {
+        background: var(--cardinal);
+      }
+
+      .win-cell .bar-fill {
+        background: var(--cardinal-soft);
+      }
+
+      .score-track {
+        overflow: visible;
+        background: transparent;
+      }
+
+      .score-track .bar-fill--positive {
+        left: 50%;
+        background: var(--cardinal);
+      }
+
+      .score-track .bar-fill--negative {
+        right: 50%;
+        left: auto;
+        background: var(--negative);
+      }
+
+      .score-track .bar-fill--zero {
+        left: calc(50% - 1.5px);
+        width: 3px;
+        background: var(--muted);
+      }
+
+      .metric-value {
+        color: var(--cardinal-dark);
+        font-size: 25px;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .metric-ci {
+        color: var(--muted);
+        font-size: 20px;
+        white-space: nowrap;
+      }
+
+      .turn-series {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .turn-metric {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: 43px 1fr;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .turn-value {
+        color: var(--cardinal-dark);
+        font-size: 18px;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      .turn-track {
+        height: 16px;
+        border-radius: 3px;
+      }
+
+      .turn-track .bar-fill {
+        background: var(--cardinal-mid);
+      }
+
+      .direction-row {
+        height: 58px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 21px;
+        font-style: italic;
+      }
+
+      .score-direction {
+        grid-column: 3;
+        width: 188px;
+        margin-left: 13px;
+        display: flex;
+        justify-content: space-between;
+        white-space: nowrap;
+      }
+
+      @media print {
+        @page {
+          size: 11.2in 5in;
+          margin: 0;
+        }
+
+        body {
+          transform: scale(0.525);
+          transform-origin: top left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="paper-figure" role="table" aria-label="Medical LLM self-preference results by model">
+      <div class="result-header" role="row">
+        <div role="columnheader">Model / judge</div>
+        <div class="metric-header" role="columnheader">Single-turn rank self-preference<br />(95% CI)</div>
+        <div class="metric-header" role="columnheader">Answer Score Bias<br />(95% CI)</div>
+        <div class="metric-header" role="columnheader">Own-Answer<br />Win Rate</div>
+        <div class="turn-header" role="columnheader">
+          Multi-turn rank self-preference
+          <div class="turn-labels" aria-hidden="true"><span>2 turns</span><span>4 turns</span><span>6 turns</span><span>8 turns</span></div>
+        </div>
+      </div>
+
+      <div id="result-rows" role="rowgroup"></div>
+
+      <div class="direction-row" aria-hidden="true">
+        <div class="score-direction"><span>← Penalizes own</span><span>Favors own →</span></div>
+      </div>
+    </main>
+
+    <script>
+      const results = [
+        { model: "GPT-5.6 Sol", rank: 2.939, rankCi: "[+2.84, +3.04]", score: 0.32, scoreCi: "[+0.30, +0.35]", win: 89.5, turns: [0.77, 0.73, 0.87, 1.20] },
+        { model: "GPT-5.6 Terra", rank: 2.224, rankCi: "[+2.12, +2.33]", score: -0.75, scoreCi: "[−0.79, −0.71]", win: 93.7, turns: [0.87, 0.72, 0.86, 0.90] },
+        { model: "Gemini 3.7 Flash", rank: 1.236, rankCi: "[+1.16, +1.32]", score: 0.67, scoreCi: "[+0.65, +0.69]", win: 73.7, turns: [0.78, 0.68, 0.75, 0.80] },
+        { model: "Claude Opus 5", rank: 0.969, rankCi: "[+0.92, +1.02]", score: 0.02, scoreCi: "[+0.00, +0.03]", win: 99.4, turns: [0.10, 0.46, 0.64, 0.47] },
+        { model: "Qwen 3.5 122B", rank: 0.730, rankCi: "[+0.61, +0.85]", score: 0.64, scoreCi: "[+0.60, +0.69]", win: 30.2, turns: [0.62, 0.38, 0.53, 0.41] },
+        { model: "Gemini 3.1 Pro", rank: 0.683, rankCi: "[+0.58, +0.79]", score: 0.55, scoreCi: "[+0.52, +0.59]", win: 56.8, turns: [1.05, 0.67, 0.67, 0.65] },
+        { model: "Claude Sonnet 5", rank: 0.647, rankCi: "[+0.53, +0.76]", score: -0.09, scoreCi: "[−0.12, −0.07]", win: 59.8, turns: [0.04, 0.35, 0.39, 0.37] },
+        { model: "Qwen 3.8 27B", rank: 0.324, rankCi: "[+0.23, +0.42]", score: 0.00, scoreCi: "[−0.05, +0.05]", win: 18.8, turns: [0.32, 0.21, 0.24, 0.11] }
+      ];
+
+      function signed(value, digits) {
+        if (value > 0) return `+${value.toFixed(digits)}`;
+        if (value < 0) return `−${Math.abs(value).toFixed(digits)}`;
+        return `+${value.toFixed(digits)}`;
+      }
+
+      function scoreBarClass(value) {
+        if (value > 0) return "bar-fill bar-fill--positive";
+        if (value < 0) return "bar-fill bar-fill--negative";
+        return "bar-fill bar-fill--zero";
+      }
+
+      function turnMetric(value) {
+        const width = Math.max(2.5, (value / 1.2) * 100);
+        return `<span class="turn-metric"><span class="turn-value">${value.toFixed(2)}</span><span class="bar-track turn-track"><span class="bar-fill" style="--w: ${width}%"></span></span></span>`;
+      }
+
+      const rows = document.getElementById("result-rows");
+      results.forEach(result => {
+        const row = document.createElement("div");
+        row.className = "result-row";
+        row.setAttribute("role", "row");
+        const rankWidth = (result.rank / 3) * 100;
+        const scoreWidth = (Math.abs(result.score) / 0.8) * 50;
+        row.innerHTML = `
+          <div class="model-name" role="rowheader">${result.model}</div>
+          <div class="metric-cell rank-cell" role="cell">
+            <span class="bar-track"><span class="bar-fill" style="--w: ${rankWidth}%"></span></span>
+            <span class="metric-value">${signed(result.rank, 3)}</span>
+            <span class="metric-ci">${result.rankCi}</span>
+          </div>
+          <div class="metric-cell score-cell" role="cell">
+            <span class="bar-track score-track"><span class="${scoreBarClass(result.score)}" style="--w: ${scoreWidth}%"></span></span>
+            <span class="metric-value">${signed(result.score, 2)}</span>
+            <span class="metric-ci">${result.scoreCi}</span>
+          </div>
+          <div class="metric-cell win-cell" role="cell">
+            <span class="bar-track"><span class="bar-fill" style="--w: ${result.win}%"></span></span>
+            <span class="metric-value">${result.win.toFixed(1)}%</span>
+          </div>
+          <div class="turn-series" role="cell" aria-label="${result.model} multi-turn values at 2, 4, 6, and 8 turns">
+            ${result.turns.map(turnMetric).join("")}
+          </div>`;
+        rows.append(row);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Medical LLM self-preference results table</title>
+    <style>
+      :root {
+        --cardinal: #8c1515;
+        --cardinal-dark: #65100f;
+        --cardinal-mid: #b26b66;
+        --negative: #a5a29c;
+        --ink: #242424;
+        --body: #505050;
+        --muted: #8a8580;
+        --line: #dedbd6;
+        --rule: #3a3a3a;
+        --wash: #efede9;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--white);
+      }
+
+      body {
+        width: 1600px;
+        padding: 36px 50px 40px;
+        color: var(--ink);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .paper-figure {
+        width: 1500px;
+        border-top: 4px solid var(--rule);
+        border-bottom: 4px solid var(--rule);
+      }
+
+      .result-header,
+      .result-row {
+        display: grid;
+        grid-template-columns: 240px 485px 485px 290px;
+        align-items: center;
+      }
+
+      .result-header {
+        height: 78px;
+        border-bottom: 2px solid var(--rule);
+        color: var(--body);
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .result-header > div,
+      .result-row > div {
+        min-width: 0;
+      }
+
+      .metric-header {
+        text-align: center;
+      }
+
+      .metric-header small {
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .win-header {
+        text-align: center;
+      }
+      .result-row {
+        height: 60px;
+        border-bottom: 1.5px solid var(--line);
+      }
+
+      .result-row:last-child {
+        border-bottom: 0;
+      }
+
+      .model-name {
+        padding-left: 4px;
+        font-size: 29px;
+        white-space: nowrap;
+      }
+
+      .metric-cell {
+        display: grid;
+        align-items: center;
+        column-gap: 18px;
+      }
+
+      .rank-cell {
+        grid-template-columns: 190px 100px 1fr;
+        padding-right: 16px;
+      }
+
+      .score-cell {
+        position: relative;
+        height: 60px;
+        grid-template-columns: 190px 100px 1fr;
+        padding-right: 16px;
+      }
+
+      .score-cell::before {
+        content: "";
+        position: absolute;
+        top: -0.75px;
+        bottom: -0.75px;
+        left: 95px;
+        width: 2px;
+        background: #b8b4ae;
+      }
+
+      .score-cell.first::before {
+        top: 0;
+      }
+
+      .score-cell.last::before {
+        bottom: 0;
+      }
+
+      .win-cell {
+        grid-template-columns: 160px 1fr;
+        padding-left: 20px;
+      }
+
+      .bar-track {
+        position: relative;
+        height: 22px;
+        border-radius: 4px;
+        background: var(--wash);
+      }
+
+      .bar-fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: var(--w);
+        min-width: 4px;
+        border-radius: 4px;
+        background: var(--cardinal);
+      }
+
+      .win-cell .bar-fill {
+        background: var(--cardinal-mid);
+      }
+
+      .score-track {
+        background: transparent;
+      }
+
+      .score-track .bar-fill--positive {
+        left: 50%;
+      }
+
+      .score-track .bar-fill--negative {
+        left: auto;
+        right: 50%;
+        background: var(--negative);
+      }
+
+      .score-track .bar-fill--zero {
+        left: calc(50% - 2px);
+        width: 4px;
+        min-width: 0;
+        background: var(--muted);
+      }
+
+      .metric-value {
+        color: var(--ink);
+        font-size: 28px;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .metric-ci {
+        color: var(--muted);
+        font-size: 24px;
+        white-space: nowrap;
+      }
+      .direction-row {
+        width: 1500px;
+        display: grid;
+        grid-template-columns: 240px 485px 485px 290px;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 22px;
+        font-style: italic;
+      }
+
+      .score-direction {
+        grid-column: 3;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        width: 200px;
+        white-space: nowrap;
+      }
+
+      .score-direction .arrow {
+        font-style: normal;
+        font-size: 18px;
+      }
+
+      @media print {
+        @page {
+          size: 8.5in 4.8in;
+          margin: 0;
+        }
+
+        html {
+          zoom: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="paper-figure" role="table" aria-label="Medical LLM self-preference results by model">
+      <div class="result-header" role="row">
+        <div class="model-name" role="columnheader" style="font-size: 28px">Model / judge</div>
+        <div class="metric-header" role="columnheader">Answer rank bias <small>(95% CI)</small></div>
+        <div class="metric-header" role="columnheader">Answer score bias <small>(95% CI)</small></div>
+        <div class="win-header" role="columnheader">Own-answer win rate</div>
+      </div>
+
+      <div id="result-rows" role="rowgroup"></div>
+    </main>
+
+    <div class="direction-row" aria-hidden="true">
+      <div class="score-direction"><span>penalizes own <span class="arrow">◀</span></span><span><span class="arrow">▶</span> favors own</span></div>
+    </div>
+
+    <script>
+      const results = [
+        { model: "GPT-5.6 Sol", rank: 2.939, rankCi: [2.84, 3.04], score: 0.32, scoreCi: [0.30, 0.35], win: 89.5 },
+        { model: "GPT-5.6 Terra", rank: 2.224, rankCi: [2.12, 2.33], score: -0.75, scoreCi: [-0.79, -0.71], win: 93.7 },
+        { model: "Gemini 3.7 Flash", rank: 1.236, rankCi: [1.16, 1.32], score: 0.67, scoreCi: [0.65, 0.69], win: 73.7 },
+        { model: "Claude Opus 5", rank: 0.969, rankCi: [0.92, 1.02], score: 0.02, scoreCi: [0.0, 0.03], win: 99.4 },
+        { model: "Qwen 3.5 122B", rank: 0.73, rankCi: [0.61, 0.85], score: 0.64, scoreCi: [0.6, 0.69], win: 30.2 },
+        { model: "Gemini 3.1 Pro", rank: 0.683, rankCi: [0.58, 0.79], score: 0.55, scoreCi: [0.52, 0.59], win: 56.8 },
+        { model: "Claude Sonnet 5", rank: 0.647, rankCi: [0.53, 0.76], score: -0.09, scoreCi: [-0.12, -0.07], win: 59.8 },
+        { model: "Qwen 3.8 27B", rank: 0.324, rankCi: [0.23, 0.42], score: 0.0, scoreCi: [-0.05, 0.05], win: 18.8 }
+      ];
+
+      const RANK_MAX = 3.0;
+      const SCORE_MAX = 0.8;
+
+      function signed(value, digits) {
+        const fixed = Math.abs(value).toFixed(digits);
+        if (value < 0) return `−${fixed}`;
+        return `+${fixed}`;
+      }
+
+      function ci([lo, hi], digits) {
+        return `[${signed(lo, digits)}, ${signed(hi, digits)}]`;
+      }
+
+      function scoreBarClass(value) {
+        if (value > 0) return "bar-fill bar-fill--positive";
+        if (value < 0) return "bar-fill bar-fill--negative";
+        return "bar-fill bar-fill--zero";
+      }
+      const rows = document.getElementById("result-rows");
+      results.forEach((result, index) => {
+        const row = document.createElement("div");
+        row.className = "result-row";
+        row.setAttribute("role", "row");
+        const rankWidth = (result.rank / RANK_MAX) * 100;
+        const scoreWidth = (Math.abs(result.score) / SCORE_MAX) * 50;
+        const edge = index === 0 ? " first" : index === results.length - 1 ? " last" : "";
+        row.innerHTML = `
+          <div class="model-name" role="rowheader">${result.model}</div>
+          <div class="metric-cell rank-cell" role="cell">
+            <span class="bar-track"><span class="bar-fill" style="--w: ${rankWidth}%"></span></span>
+            <span class="metric-value">${signed(result.rank, 2)}</span>
+            <span class="metric-ci">${ci(result.rankCi, 2)}</span>
+          </div>
+          <div class="metric-cell score-cell${edge}" role="cell">
+            <span class="bar-track score-track"><span class="${scoreBarClass(result.score)}" style="--w: ${scoreWidth}%"></span></span>
+            <span class="metric-value">${signed(result.score, 2)}</span>
+            <span class="metric-ci">${ci(result.scoreCi, 2)}</span>
+          </div>
+          <div class="metric-cell win-cell" role="cell">
+            <span class="bar-track"><span class="bar-fill" style="--w: ${result.win}%"></span></span>
+            <span class="metric-value">${result.win.toFixed(1)}%</span>
+          </div>`;
+        rows.append(row);
+      });
+    </script>
+  </body>
+</html>
