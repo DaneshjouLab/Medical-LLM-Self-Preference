@@ -66,6 +66,17 @@ values when `binomial_p` underflows to zero.
   model scoring and within-model moderation of matched self-preference.
 - `token_length_model_summary.csv`: model-level lexical-token lengths and
   descriptive mean ranks/scores standardized to the pooled mean length.
+- `medsp1000_all_eight_judges_v2.json`: position-adjusted matched effects for
+  the complete eight-model MedSP1000 extension, including repeated-measures
+  transcript-length tests.
+
+The eight-model MedSP1000 analysis is generated with:
+
+```bash
+uv run python scripts/analyze_new_self_preference.py \
+  --medsp-experiment-id medsp1000_all_eight_judges_v2 \
+  --output data/analysis/self_preference/medsp1000_all_eight_judges_v2.json
+```
 
 The token-length files are generated separately with:
 

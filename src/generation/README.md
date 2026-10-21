@@ -68,6 +68,14 @@ The runner treats each full clinician-patient transcript as one candidate,
 scores only clinician behavior, and writes append-only, resumable outputs under
 `data/outputs/medsp1000/judgements/`.
 
+The two pinned Qwen judges use the dedicated batched Modal entry point. It
+reuses warm model servers across all requested transcript views and resumes the
+same logical cells as the provider-API runner:
+
+```bash
+uv run modal run src/judging/modal_medsp1000_judging.py::main
+```
+
 To judge a prefix of each trajectory instead, pass an even role-turn count no
 greater than the generated trajectory length. Prefix views have distinct
 prompt-template IDs, resume keys, manifests, and JSONLs, so they cannot collide

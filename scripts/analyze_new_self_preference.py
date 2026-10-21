@@ -7,6 +7,7 @@ Markdown results can be checked without additional model calls.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 from collections import defaultdict
@@ -455,14 +456,31 @@ def hotelling_length_test(question_by_length: dict[int, dict[str, float]]) -> di
     }
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--medsp-experiment-id",
+        default="medsp1000_all_judges_v1",
+        help="MedSP1000 experiment identifier to analyze",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="write JSON to this path instead of standard output",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     real_records = read_production(REAL, "real_pocqi_combined_all_judges_v1")
     direct_records = read_production(DIRECT, "real_pocqi_direct_ranking_random100_v1")
     identity_records = read_production(
         IDENTITY_REVEALED, "real_pocqi_identity_revealed_random200_v1"
     )
     med_records = {
-        length: read_production(path, "medsp1000_all_judges_v1") for length, path in MED.items()
+        length: read_production(path, args.medsp_experiment_id)
+        for length, path in MED.items()
     }
 
     real = analyze_records(real_records)
@@ -494,26 +512,30 @@ def main() -> None:
         for analysis in result.values():
             analysis.pop("question_effects", None)
 
-    print(
-        json.dumps(
-            {
-                "record_counts": {
-                    "real_pocqi": len(real_records),
-                    "direct_ranking": len(direct_records),
-                    "identity_revealed": len(identity_records),
-                    "medsp1000": {str(k): len(v) for k, v in med_records.items()},
-                },
-                "real_pocqi": real,
-                "direct_ranking": direct,
-                "direct_vs_combined": direct_comparison,
-                "identity_revealed_vs_blinded": identity_comparison,
-                "medsp1000": med,
-                "medsp1000_repeated_measures": med_repeated,
+    rendered = json.dumps(
+        {
+            "medsp1000_experiment_id": args.medsp_experiment_id,
+            "record_counts": {
+                "real_pocqi": len(real_records),
+                "direct_ranking": len(direct_records),
+                "identity_revealed": len(identity_records),
+                "medsp1000": {str(k): len(v) for k, v in med_records.items()},
             },
-            indent=2,
-            sort_keys=True,
-        )
+            "real_pocqi": real,
+            "direct_ranking": direct,
+            "direct_vs_combined": direct_comparison,
+            "identity_revealed_vs_blinded": identity_comparison,
+            "medsp1000": med,
+            "medsp1000_repeated_measures": med_repeated,
+        },
+        indent=2,
+        sort_keys=True,
     )
+    if args.output is None:
+        print(rendered)
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(rendered + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

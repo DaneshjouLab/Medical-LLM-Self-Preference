@@ -43,9 +43,13 @@ Useful entry points:
 - Removing the explicit rubric preserved the dominant Real-POCQi result:
   direct and rubric-assisted rankings agreed on 91.5% of candidate pairs.
 - MedSP1000 showed matched self-preference at every transcript length. Pooled
-  effects were **−0.518, −0.457, −0.502, and −0.613 positions** at 2, 4, 6,
-  and 8 turns, respectively; the relationship with conversation length was not
-  monotonic.
+  eight-model effects were **−0.567, −0.525, −0.619, and −0.614 positions** at
+  2, 4, 6, and 8 turns, respectively; the global repeated-measures test found
+  no clear length effect (`p=0.167`).
+- Qwen 122B ranked first overall after two visible turns but fell to eighth by
+  the full interaction. Its own judge nevertheless favored it at every length.
+  Qwen 27B ranked last through six turns and seventh at eight turns; its matched
+  self-preference attenuated to include zero at full context.
 - Revealing generator identities did not amplify the effect. On matched
   Real-POCQi cells, self-preference was modestly weaker with names visible
   (revealed minus blinded: **+0.123 positions**, 95% CI +0.059 to +0.188).
@@ -62,16 +66,16 @@ instead of relying on a single LLM judge or raw win rate.
 | Component | Real-POCQi | MedSP1000 |
 |---|---:|---:|
 | Frozen inputs | 620 questions | 200 scenarios |
-| Candidate generators | 8 | 6 clinician models |
-| Judges | 8 | 6 |
-| Primary candidate set | 8 answers | 6 trajectories |
+| Candidate generators | 8 | 8 clinician models |
+| Judges | 8 | 8 |
+| Primary candidate set | 8 answers | 8 trajectories |
 | Evaluation views | Blinded, direct ranking, identity revealed | 2, 4, 6, and 8 turns |
-| Saved judgments | 6,960 | 4,800 |
+| Saved judgments | 6,960 | 11,200 (6,400 current; 4,800 prior) |
 
-The repository contains **11,760 judgments**:
+The repository contains **18,160 successful logical judgments**:
 4,960 blinded Real-POCQi rubric-plus-ranking judgments, 800 direct rankings,
-1,200 identity-revealed judgments, and 4,800 MedSP1000 judgments across four
-conversation lengths.
+1,200 identity-revealed judgments, 6,400 eight-model MedSP1000 judgments, and
+4,800 retained judgments from the prior six-model MedSP1000 condition.
 
 ### Model cohorts
 
@@ -84,10 +88,10 @@ The complete Real-POCQi cohort contains two models from each of four families:
 | Google | `gemini-3.1-pro-preview`, `gemini-3.7-flash` |
 | Qwen | `Qwen/Qwen3.5-122B-A10B-FP8`, `Qwen/Qwen3.8-27B-FP8` |
 
-MedSP1000 uses the six API models as clinician generators and judges. The
-patient simulator is fixed to
-`mistralai/Mistral-Small-3.1-24B-Instruct-2503`. Qwen clinician and judge runs
-are not included in the current MedSP1000 experiments.
+MedSP1000 uses all eight models as clinician generators and judges. The patient
+simulator is fixed to `mistralai/Mistral-Small-3.1-24B-Instruct-2503`. The
+earlier six-API-model condition is retained under its original experiment ID;
+the current eight-model condition adds both pinned Qwen clinicians and judges.
 
 The repository also preserves results from an earlier four-model phase. Its
 raw generations and judgments are not available here, so those results cannot
@@ -224,8 +228,9 @@ Operational formats are documented alongside their artifacts:
 - Some specialty strata are small, limiting subgroup power.
 - The identity-revealed comparison contains six API judges and should not be
   generalized to the two Qwen judges.
-- Current MedSP1000 conclusions cover six API clinician models, not the full
-  eight-model Real-POCQi cohort.
+- The eight-model MedSP1000 extension adds open-weight Qwen models to the six
+  API clinicians; raw rubric scores should still be compared with care because
+  judge calibration differs across model families.
 - Model outputs and judgments may contain factual errors, unsafe medical
   content, or provider-specific artifacts. They are not clinical
   recommendations.

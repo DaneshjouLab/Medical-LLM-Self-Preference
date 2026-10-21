@@ -150,7 +150,13 @@ def _question(question: int) -> dict:
     }
 
 
-def _generation(question: int, model: str, *, generation_key: str | None = None) -> dict:
+def _generation(
+    question: int,
+    model: str,
+    *,
+    generation_key: str | None = None,
+    reasoning_effort: str | None = "medium",
+) -> dict:
     question_id = f"case-{question}__scenario1"
     turns = [
         {"role": "clinician", "content": f"Opening from {model}"},
@@ -173,7 +179,7 @@ def _generation(question: int, model: str, *, generation_key: str | None = None)
         "attempt": 1,
         "exchange_count": 4,
         "turn_count": 8,
-        "clinician_reasoning_effort": "medium",
+        "clinician_reasoning_effort": reasoning_effort,
         "patient_model": "patient-model",
         "patient_prompt_template_id": "patient-v1",
         "prompt_version": "prompt-v1",
@@ -246,6 +252,31 @@ def test_medsp_loader_requires_complete_unambiguous_matrix(tmp_path: Path) -> No
             questions_path=questions,
             generator_models=("generator-a", "generator-b"),
         )
+
+
+def test_medsp_loader_accepts_disabled_reasoning_for_qwen(tmp_path: Path) -> None:
+    questions = tmp_path / "questions.jsonl"
+    generations = tmp_path / "generations.jsonl"
+    questions.write_text(json.dumps(_question(1)) + "\n", encoding="utf-8")
+    generations.write_text(
+        json.dumps(
+            _generation(
+                1,
+                "Qwen/Qwen3.8-27B-FP8",
+                reasoning_effort=None,
+            )
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    loaded = load_latest_question_trajectories(
+        generations,
+        questions_path=questions,
+        generator_models=("Qwen/Qwen3.8-27B-FP8",),
+    )
+    assert len(loaded) == 1
+    assert loaded[0].responses[0].generator_model == "Qwen/Qwen3.8-27B-FP8"
 
 
 def test_medsp_batch_runner_dry_run_and_resume(tmp_path: Path, capsys) -> None:

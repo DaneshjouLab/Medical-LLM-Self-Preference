@@ -45,6 +45,8 @@ DEFAULT_GENERATOR_MODELS = (
     "claude-sonnet-5",
     "gemini-3.1-pro-preview",
     "gemini-3.7-flash",
+    "Qwen/Qwen3.5-122B-A10B-FP8",
+    "Qwen/Qwen3.8-27B-FP8",
 )
 DEFAULT_JUDGE_MODELS = DEFAULT_GENERATOR_MODELS
 
@@ -178,7 +180,12 @@ def load_latest_question_trajectories(
                 or record.get("clinician_model") not in requested_set
                 or record.get("question_id") not in requested_questions
                 or record.get("exchange_count") != exchange_count
-                or record.get("clinician_reasoning_effort") != reasoning_effort
+                or record.get("clinician_reasoning_effort")
+                != (
+                    None
+                    if _generator_family(record["clinician_model"]) == "qwen"
+                    else reasoning_effort
+                )
             ):
                 continue
             if record.get("turn_count") != full_turn_count:
@@ -337,6 +344,7 @@ def write_manifest(
             "openai": args.openai_concurrency,
             "anthropic": args.anthropic_concurrency,
             "gemini": args.gemini_concurrency,
+            "modal": args.modal_concurrency,
         },
         "logical_judgments": counts,
     }
@@ -374,6 +382,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--openai-concurrency", type=int, default=2)
     parser.add_argument("--anthropic-concurrency", type=int, default=2)
     parser.add_argument("--gemini-concurrency", type=int, default=2)
+    parser.add_argument("--modal-concurrency", type=int, default=2)
     parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--retry-delay-seconds", type=float, default=2.0)
     parser.add_argument("--force", action="store_true")
@@ -389,6 +398,7 @@ def run(args: argparse.Namespace, *, model_caller: ModelCaller = call_model) -> 
         "openai_concurrency",
         "anthropic_concurrency",
         "gemini_concurrency",
+        "modal_concurrency",
     ):
         if getattr(args, name) <= 0:
             raise ValueError(f"--{name.replace('_', '-')} must be positive")
@@ -449,6 +459,7 @@ def run(args: argparse.Namespace, *, model_caller: ModelCaller = call_model) -> 
             Provider.OPENAI: args.openai_concurrency,
             Provider.ANTHROPIC: args.anthropic_concurrency,
             Provider.GEMINI: args.gemini_concurrency,
+            Provider.MODAL: args.modal_concurrency,
         },
     )
     succeeded = failed = completed_jobs = 0
